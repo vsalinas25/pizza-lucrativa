@@ -1,0 +1,56 @@
+import { calcularCMVPercentual, formatarPercentual } from "@/lib/calc";
+import type { Pizza, CanalVenda, PrecoPorCanal } from "@/types";
+
+type PizzaComPrecos = Pizza & { precos_por_canal: PrecoPorCanal[] };
+
+export default function RankingOfensores({
+  pizzas,
+  canais,
+}: {
+  pizzas: PizzaComPrecos[];
+  canais: CanalVenda[];
+}) {
+  const ofensores = pizzas
+    .flatMap((pizza) =>
+      pizza.precos_por_canal.map((pc) => {
+        const canal = canais.find((c) => c.id === pc.canal_id);
+        return {
+          pizzaNome: pizza.nome,
+          canalNome: canal?.nome ?? "—",
+          cmv: calcularCMVPercentual(pizza.custo_ficha_tecnica, pc.preco_atual),
+        };
+      })
+    )
+    .sort((a, b) => b.cmv - a.cmv)
+    .slice(0, 6);
+
+  function acaoSugerida(cmv: number): string {
+    if (cmv > 0.45) return "Renegociar custo ou subir preço com urgência";
+    if (cmv > 0.38) return "Revisar ficha técnica ou ajustar preço";
+    return "Monitorar";
+  }
+
+  return (
+    <div className="rounded-lg border border-carvao-700 p-5">
+      <h2 className="font-display text-lg font-semibold mb-4">Piores ofensores</h2>
+      <div className="space-y-3">
+        {ofensores.map((o, i) => (
+          <div key={i} className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-trigo-50">{o.pizzaNome}</p>
+              <p className="text-xs text-trigo-400">
+                {o.canalNome} · {acaoSugerida(o.cmv)}
+              </p>
+            </div>
+            <span className="font-mono text-sm font-semibold text-sinal-vermelho tabular-nums">
+              {formatarPercentual(o.cmv)}
+            </span>
+          </div>
+        ))}
+        {ofensores.length === 0 && (
+          <p className="text-trigo-400 text-sm">Sem dados suficientes ainda.</p>
+        )}
+      </div>
+    </div>
+  );
+}
