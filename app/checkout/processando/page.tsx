@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, QrCode } from "lucide-react";
 
@@ -12,6 +12,14 @@ type StatusPagamento = "verificando" | "aguardando_pix" | "confirmado" | "erro";
  * nunca deixamos o cliente numa tela travada sem feedback.
  */
 export default function ProcessandoPage() {
+  return (
+    <Suspense fallback={null}>
+      <ProcessandoConteudo />
+    </Suspense>
+  );
+}
+
+function ProcessandoConteudo() {
   const params = useSearchParams();
   const router = useRouter();
   const sessionId = params.get("session_id");

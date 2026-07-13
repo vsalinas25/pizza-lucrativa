@@ -1,3 +1,4 @@
+import { Settings } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getStatusAcesso } from "@/lib/acesso";
 import ResumoExecutivo from "@/components/dashboard/ResumoExecutivo";
@@ -56,7 +57,17 @@ export default async function DashboardPage() {
           <h1 className="font-display text-2xl font-semibold">{pizzaria.nome}</h1>
           <p className="text-trigo-400 text-sm">{pizzaria.cidade}</p>
         </div>
-        <BadgeRenovacao renovacaoAtiva={temRenovacaoAtiva} />
+        <div className="flex items-center gap-3">
+          <BadgeRenovacao renovacaoAtiva={temRenovacaoAtiva} />
+          <a
+            href="/configuracoes"
+            className="text-trigo-400 hover:text-brasa-400 transition-colors"
+            aria-label="Configurações"
+            title="Configurações"
+          >
+            <Settings className="h-5 w-5" />
+          </a>
+        </div>
       </header>
 
       <ResumoExecutivo pizzaria={pizzaria} pizzas={pizzas ?? []} canais={canais ?? []} />

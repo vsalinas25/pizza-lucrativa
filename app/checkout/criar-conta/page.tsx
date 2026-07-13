@@ -1,10 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function CriarContaPage() {
+  return (
+    <Suspense fallback={null}>
+      <CriarContaForm />
+    </Suspense>
+  );
+}
+
+function CriarContaForm() {
   const params = useSearchParams();
   const router = useRouter();
   const sessionId = params.get("session_id");

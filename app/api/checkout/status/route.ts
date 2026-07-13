@@ -20,7 +20,6 @@ export async function GET(request: Request) {
     typeof paymentIntent === "object" &&
     paymentIntent?.next_action?.type === "pix_display_qr_code"
   ) {
-    // @ts-expect-error — campo específico do PIX não tipado no SDK ainda
     pixQrCode = paymentIntent.next_action.pix_display_qr_code?.image_url_png ?? null;
   }
 
