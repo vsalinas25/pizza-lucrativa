@@ -120,7 +120,7 @@ export default function OnboardingPage() {
 
   return (
     <main className="min-h-screen px-5 py-10 max-w-lg mx-auto">
-      <p className="font-mono text-xs uppercase tracking-widest text-brasa-400 mb-2">
+      <p className="font-mono text-xs uppercase tracking-widest text-menta-600 mb-2">
         Passo {passo} de 3
       </p>
 
@@ -137,7 +137,7 @@ export default function OnboardingPage() {
           <button
             onClick={() => setPasso(2)}
             disabled={!nome}
-            className="w-full rounded-md bg-brasa-500 hover:bg-brasa-600 disabled:opacity-40 text-carvao-950 font-semibold py-2.5"
+            className="w-full rounded-md bg-menta-500 hover:bg-menta-600 disabled:opacity-40 text-white font-semibold py-2.5"
           >
             Continuar
           </button>
@@ -151,16 +151,16 @@ export default function OnboardingPage() {
             {CANAIS_DISPONIVEIS.map((canal) => (
               <label
                 key={canal}
-                className="flex items-center gap-3 rounded-md border border-carvao-700 px-4 py-3 cursor-pointer"
+                className="flex items-center gap-3 rounded-md border border-creme-200 px-4 py-3 cursor-pointer"
               >
                 <input
                   type="checkbox"
                   checked={canaisAtivos.includes(canal)}
                   onChange={() => alternarCanal(canal)}
-                  className="accent-brasa-500"
+                  className="accent-menta-500"
                 />
                 <span>{DEFAULT_TAXAS_PLATAFORMA[canal].label}</span>
-                <span className="ml-auto text-xs text-trigo-400">
+                <span className="ml-auto text-xs text-tinta-400">
                   comissão padrão {DEFAULT_TAXAS_PLATAFORMA[canal].comissao_percentual}%
                 </span>
               </label>
@@ -169,7 +169,7 @@ export default function OnboardingPage() {
           <button
             onClick={salvarPizzariaECanais}
             disabled={carregando || canaisAtivos.length === 0}
-            className="w-full rounded-md bg-brasa-500 hover:bg-brasa-600 disabled:opacity-40 text-carvao-950 font-semibold py-2.5"
+            className="w-full rounded-md bg-menta-500 hover:bg-menta-600 disabled:opacity-40 text-white font-semibold py-2.5"
           >
             {carregando ? "Salvando..." : "Continuar"}
           </button>
@@ -179,14 +179,14 @@ export default function OnboardingPage() {
       {passo === 3 && (
         <div className="space-y-4">
           <h1 className="font-display text-2xl font-semibold mb-2">Importar pizzas (opcional)</h1>
-          <p className="text-trigo-400 text-sm mb-4">
+          <p className="text-tinta-400 text-sm mb-4">
             CSV com colunas: nome, custo, preco. Pode pular e cadastrar direto no dashboard.
           </p>
           <input
             type="file"
             accept=".csv"
             onChange={(e) => e.target.files?.[0] && processarCSV(e.target.files[0])}
-            className="text-sm text-trigo-200"
+            className="text-sm text-tinta-700"
           />
           {csvPizzas.length > 0 && (
             <p className="text-sinal-verde text-sm">{csvPizzas.length} pizzas encontradas no arquivo.</p>
@@ -194,7 +194,7 @@ export default function OnboardingPage() {
           <button
             onClick={finalizarOnboarding}
             disabled={carregando}
-            className="w-full rounded-md bg-brasa-500 hover:bg-brasa-600 disabled:opacity-40 text-carvao-950 font-semibold py-2.5"
+            className="w-full rounded-md bg-menta-500 hover:bg-menta-600 disabled:opacity-40 text-white font-semibold py-2.5"
           >
             {carregando ? "Finalizando..." : "Ir para o dashboard"}
           </button>
@@ -217,12 +217,12 @@ function Campo({
 }) {
   return (
     <div>
-      <label className="text-sm text-trigo-200 block mb-1.5">{label}</label>
+      <label className="text-sm text-tinta-700 block mb-1.5">{label}</label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md bg-carvao-800 border border-carvao-700 px-3.5 py-2.5 text-trigo-50 outline-none focus:border-brasa-400"
+        className="w-full rounded-md bg-white border border-creme-200 px-3.5 py-2.5 text-tinta-950 outline-none focus:border-menta-600"
       />
     </div>
   );

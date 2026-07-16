@@ -56,14 +56,14 @@ export default function ListaCanais({
   return (
     <div className="space-y-4">
       {canaisIniciais.map((canal) => (
-        <div key={canal.id} className="rounded-lg border border-carvao-700 p-5">
+        <div key={canal.id} className="rounded-lg border border-creme-200 p-5">
           <div className="flex items-center justify-between mb-4">
-            <p className="font-medium text-trigo-50">
+            <p className="font-medium text-tinta-950">
               {DEFAULT_TAXAS_PLATAFORMA[canal.nome]?.label ?? canal.nome}
             </p>
             <button
               onClick={() => removerCanal(canal.id)}
-              className="text-trigo-400 hover:text-sinal-vermelho transition-colors"
+              className="text-tinta-400 hover:text-sinal-vermelho transition-colors"
               aria-label="Remover canal"
               title="Remover canal"
             >
@@ -104,7 +104,7 @@ export default function ListaCanais({
       ))}
 
       {canaisIniciais.length === 0 && (
-        <p className="text-trigo-400 text-sm">Nenhum canal de venda cadastrado ainda.</p>
+        <p className="text-tinta-400 text-sm">Nenhum canal de venda cadastrado ainda.</p>
       )}
 
       {canaisDisponiveisParaAdicionar.length > 0 && (
@@ -112,7 +112,7 @@ export default function ListaCanais({
           <select
             value={canalParaAdicionar}
             onChange={(e) => setCanalParaAdicionar(e.target.value as NomeCanal)}
-            className="rounded-md bg-carvao-800 border border-carvao-700 px-3 py-2 text-sm"
+            className="rounded-md bg-white border border-creme-200 px-3 py-2 text-sm"
           >
             {canaisDisponiveisParaAdicionar.map((c) => (
               <option key={c} value={c}>
@@ -123,7 +123,7 @@ export default function ListaCanais({
           <button
             onClick={adicionarCanal}
             disabled={adicionando}
-            className="rounded-md border border-carvao-700 hover:border-brasa-400 hover:text-brasa-400 disabled:opacity-60 text-trigo-200 px-4 py-2 text-sm transition-colors"
+            className="rounded-md border border-creme-200 hover:border-menta-600 hover:text-menta-600 disabled:opacity-60 text-tinta-700 px-4 py-2 text-sm transition-colors"
           >
             {adicionando ? "Adicionando..." : "Adicionar canal"}
           </button>
@@ -146,13 +146,13 @@ function CampoTaxa({
 
   return (
     <div>
-      <label className="text-xs text-trigo-400 block mb-1.5">{label}</label>
+      <label className="text-xs text-tinta-400 block mb-1.5">{label}</label>
       <input
         type="number"
         value={valor}
         onChange={(e) => setValor(e.target.value)}
         onBlur={() => onSalvar(Number(valor) || 0)}
-        className="w-full rounded-md bg-carvao-800 border border-carvao-700 px-3 py-2 text-sm text-trigo-50 outline-none focus:border-brasa-400 font-mono"
+        className="w-full rounded-md bg-white border border-creme-200 px-3 py-2 text-sm text-tinta-950 outline-none focus:border-menta-600 font-mono"
       />
     </div>
   );

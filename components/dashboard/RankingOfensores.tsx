@@ -31,14 +31,14 @@ export default function RankingOfensores({
   }
 
   return (
-    <div className="rounded-lg border border-carvao-700 p-5">
+    <div className="rounded-lg border border-creme-200 p-5">
       <h2 className="font-display text-lg font-semibold mb-4">Piores ofensores</h2>
       <div className="space-y-3">
         {ofensores.map((o, i) => (
           <div key={i} className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-trigo-50">{o.pizzaNome}</p>
-              <p className="text-xs text-trigo-400">
+              <p className="text-sm text-tinta-950">{o.pizzaNome}</p>
+              <p className="text-xs text-tinta-400">
                 {o.canalNome} · {acaoSugerida(o.cmv)}
               </p>
             </div>
@@ -48,7 +48,7 @@ export default function RankingOfensores({
           </div>
         ))}
         {ofensores.length === 0 && (
-          <p className="text-trigo-400 text-sm">Sem dados suficientes ainda.</p>
+          <p className="text-tinta-400 text-sm">Sem dados suficientes ainda.</p>
         )}
       </div>
     </div>

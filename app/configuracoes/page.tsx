@@ -25,9 +25,9 @@ export default async function ConfiguracoesPage() {
   if (!pizzaria) {
     return (
       <main className="min-h-screen flex items-center justify-center px-5">
-        <p className="text-trigo-400">
+        <p className="text-tinta-400">
           Nenhuma pizzaria cadastrada ainda. Volte ao{" "}
-          <a href="/onboarding" className="text-brasa-400 underline">
+          <a href="/onboarding" className="text-menta-600 underline">
             onboarding
           </a>
           .
@@ -62,7 +62,7 @@ export default async function ConfiguracoesPage() {
     <main className="min-h-screen px-5 py-8 sm:px-8 max-w-3xl mx-auto space-y-10">
       <header>
         <h1 className="font-display text-2xl font-semibold">Configurações</h1>
-        <p className="text-trigo-400 text-sm mt-1">
+        <p className="text-tinta-400 text-sm mt-1">
           Dados da pizzaria, canais de venda e status de acesso.
         </p>
       </header>

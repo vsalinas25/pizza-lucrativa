@@ -29,9 +29,9 @@ export default async function DashboardPage() {
   if (!pizzaria) {
     return (
       <main className="min-h-screen flex items-center justify-center px-5">
-        <p className="text-trigo-400">
+        <p className="text-tinta-400">
           Nenhuma pizzaria cadastrada ainda. Volte ao{" "}
-          <a href="/onboarding" className="text-brasa-400 underline">
+          <a href="/onboarding" className="text-menta-600 underline">
             onboarding
           </a>
           .
@@ -55,13 +55,13 @@ export default async function DashboardPage() {
       <header className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-2xl font-semibold">{pizzaria.nome}</h1>
-          <p className="text-trigo-400 text-sm">{pizzaria.cidade}</p>
+          <p className="text-tinta-400 text-sm">{pizzaria.cidade}</p>
         </div>
         <div className="flex items-center gap-3">
           <BadgeRenovacao renovacaoAtiva={temRenovacaoAtiva} />
           <a
             href="/configuracoes"
-            className="text-trigo-400 hover:text-brasa-400 transition-colors"
+            className="text-tinta-400 hover:text-menta-600 transition-colors"
             aria-label="Configurações"
             title="Configurações"
           >

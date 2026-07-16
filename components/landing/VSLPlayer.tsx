@@ -16,8 +16,8 @@ export default function VSLPlayer() {
 
   if (!EMBED_URL) {
     return (
-      <div className="aspect-video w-full rounded-lg bg-carvao-800 border border-carvao-700 flex items-center justify-center">
-        <p className="text-trigo-400 text-sm px-6 text-center">
+      <div className="aspect-video w-full rounded-lg bg-white border border-creme-200 flex items-center justify-center">
+        <p className="text-tinta-400 text-sm px-6 text-center">
           Espaço reservado do VSL — configure NEXT_PUBLIC_VSL_EMBED_URL e
           NEXT_PUBLIC_VSL_THUMBNAIL_URL no .env
         </p>
@@ -34,9 +34,9 @@ export default function VSLPlayer() {
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={THUMBNAIL_URL} alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-carvao-950/30 group-hover:bg-carvao-950/40 transition-colors flex items-center justify-center">
-          <span className="h-16 w-16 rounded-full bg-brasa-500 flex items-center justify-center">
-            <Play className="h-7 w-7 text-carvao-950 ml-1" fill="currentColor" />
+        <div className="absolute inset-0 bg-creme-50/30 group-hover:bg-creme-50/40 transition-colors flex items-center justify-center">
+          <span className="h-16 w-16 rounded-full bg-menta-500 flex items-center justify-center">
+            <Play className="h-7 w-7 text-white ml-1" fill="currentColor" />
           </span>
         </div>
       </button>

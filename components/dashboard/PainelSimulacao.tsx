@@ -32,15 +32,15 @@ export default function PainelSimulacao({
   }, [pizza, preco, cmvAlvoPct]);
 
   return (
-    <div className="rounded-lg border border-carvao-700 p-5 space-y-4 h-fit">
+    <div className="rounded-lg border border-creme-200 p-5 space-y-4 h-fit">
       <h2 className="font-display text-lg font-semibold">Simulador de margem</h2>
 
       <div>
-        <label className="text-xs text-trigo-400 block mb-1.5">Pizza</label>
+        <label className="text-xs text-tinta-400 block mb-1.5">Pizza</label>
         <select
           value={pizzaSelecionadaId}
           onChange={(e) => setPizzaSelecionadaId(e.target.value)}
-          className="w-full rounded-md bg-carvao-800 border border-carvao-700 px-3 py-2 text-sm"
+          className="w-full rounded-md bg-white border border-creme-200 px-3 py-2 text-sm"
         >
           {pizzas.map((p) => (
             <option key={p.id} value={p.id}>
@@ -51,11 +51,11 @@ export default function PainelSimulacao({
       </div>
 
       <div>
-        <label className="text-xs text-trigo-400 block mb-1.5">Canal</label>
+        <label className="text-xs text-tinta-400 block mb-1.5">Canal</label>
         <select
           value={canalSelecionadoId}
           onChange={(e) => setCanalSelecionadoId(e.target.value)}
-          className="w-full rounded-md bg-carvao-800 border border-carvao-700 px-3 py-2 text-sm"
+          className="w-full rounded-md bg-white border border-creme-200 px-3 py-2 text-sm"
         >
           {canais.map((c) => (
             <option key={c.id} value={c.id}>
@@ -66,8 +66,8 @@ export default function PainelSimulacao({
       </div>
 
       <div>
-        <label className="text-xs text-trigo-400 block mb-1.5">
-          CMV-alvo: <span className="text-brasa-400 font-mono">{cmvAlvoPct}%</span>
+        <label className="text-xs text-tinta-400 block mb-1.5">
+          CMV-alvo: <span className="text-menta-600 font-mono">{cmvAlvoPct}%</span>
         </label>
         <input
           type="range"
@@ -75,17 +75,17 @@ export default function PainelSimulacao({
           max={60}
           value={cmvAlvoPct}
           onChange={(e) => setCmvAlvoPct(Number(e.target.value))}
-          className="w-full accent-brasa-500"
+          className="w-full accent-menta-500"
         />
       </div>
 
       {resultado && (
-        <div className="rounded-md bg-carvao-800 p-4 space-y-2">
-          <p className="text-sm text-trigo-400">
-            CMV atual: <span className="text-trigo-50 font-mono">{formatarPercentual(resultado.cmvAtualPercentual)}</span>
+        <div className="rounded-md bg-white p-4 space-y-2">
+          <p className="text-sm text-tinta-400">
+            CMV atual: <span className="text-tinta-950 font-mono">{formatarPercentual(resultado.cmvAtualPercentual)}</span>
           </p>
-          <p className="text-sm text-trigo-400">
-            Preço sugerido: <span className="text-brasa-400 font-mono font-semibold">{formatarMoeda(resultado.precoSugeridoParaCMVAlvo)}</span>
+          <p className="text-sm text-tinta-400">
+            Preço sugerido: <span className="text-menta-600 font-mono font-semibold">{formatarMoeda(resultado.precoSugeridoParaCMVAlvo)}</span>
           </p>
 
           {resultado.ultrapassaTetoMercado && (
@@ -93,7 +93,7 @@ export default function PainelSimulacao({
               <p className="text-sinal-amarelo text-xs font-semibold mb-1.5">
                 Esse preço ultrapassa o teto de mercado que você definiu
               </p>
-              <ul className="text-xs text-trigo-300 space-y-1 list-disc list-inside">
+              <ul className="text-xs text-tinta-700 space-y-1 list-disc list-inside">
                 {resultado.alavancasSugeridas.map((a) => (
                   <li key={a}>{a}</li>
                 ))}

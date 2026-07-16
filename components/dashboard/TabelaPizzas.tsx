@@ -36,14 +36,14 @@ export default function TabelaPizzas({
   }
 
   return (
-    <div className="rounded-lg border border-carvao-700 overflow-x-auto">
+    <div className="rounded-lg border border-creme-200 overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-carvao-700 text-left">
-            <th className="px-4 py-3 text-trigo-400 font-medium">Pizza</th>
-            <th className="px-4 py-3 text-trigo-400 font-medium">Custo</th>
+          <tr className="border-b border-creme-200 text-left">
+            <th className="px-4 py-3 text-tinta-400 font-medium">Pizza</th>
+            <th className="px-4 py-3 text-tinta-400 font-medium">Custo</th>
             {canais.map((c) => (
-              <th key={c.id} className="px-4 py-3 text-trigo-400 font-medium">
+              <th key={c.id} className="px-4 py-3 text-tinta-400 font-medium">
                 {c.nome}
               </th>
             ))}
@@ -51,9 +51,9 @@ export default function TabelaPizzas({
         </thead>
         <tbody>
           {pizzas.map((pizza) => (
-            <tr key={pizza.id} className="border-b border-carvao-800 last:border-0">
-              <td className="px-4 py-3 font-medium text-trigo-50">{pizza.nome}</td>
-              <td className="px-4 py-3 text-trigo-400 tabular-nums font-mono">
+            <tr key={pizza.id} className="border-b border-white last:border-0">
+              <td className="px-4 py-3 font-medium text-tinta-950">{pizza.nome}</td>
+              <td className="px-4 py-3 text-tinta-400 tabular-nums font-mono">
                 {formatarMoeda(pizza.custo_ficha_tecnica)}
               </td>
               {canais.map((canal) => {
@@ -72,7 +72,7 @@ export default function TabelaPizzas({
                         onBlur={(e) =>
                           atualizarPreco(pizza.id, canal.id, Number(e.target.value), preco?.id)
                         }
-                        className="w-20 rounded bg-carvao-800 border border-brasa-400 px-2 py-1 text-trigo-50 font-mono"
+                        className="w-20 rounded bg-white border border-menta-600 px-2 py-1 text-tinta-950 font-mono"
                       />
                     ) : (
                       <button
@@ -89,7 +89,7 @@ export default function TabelaPizzas({
           ))}
           {pizzas.length === 0 && (
             <tr>
-              <td colSpan={canais.length + 2} className="px-4 py-8 text-center text-trigo-400">
+              <td colSpan={canais.length + 2} className="px-4 py-8 text-center text-tinta-400">
                 Nenhuma pizza cadastrada ainda. Adicione no onboarding ou importe via CSV.
               </td>
             </tr>

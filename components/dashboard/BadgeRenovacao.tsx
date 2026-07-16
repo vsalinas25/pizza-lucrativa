@@ -18,7 +18,7 @@ export default function BadgeRenovacao({ renovacaoAtiva }: { renovacaoAtiva: boo
   return (
     <button
       onClick={iniciarRenovacao}
-      className="text-xs font-mono px-2.5 py-1.5 rounded-full border border-carvao-700 text-trigo-400 hover:border-brasa-400 hover:text-brasa-400 transition-colors"
+      className="text-xs font-mono px-2.5 py-1.5 rounded-full border border-creme-200 text-tinta-400 hover:border-menta-600 hover:text-menta-600 transition-colors"
       title="Seu dashboard funciona normalmente. Isto só atualiza taxas de plataforma e libera novidades."
     >
       Atualizar taxas de plataforma — R$97/ano

@@ -44,7 +44,7 @@ export default function FormPizzaria({ pizzaria }: { pizzaria: Pizzaria }) {
   }
 
   return (
-    <form onSubmit={salvar} className="rounded-lg border border-carvao-700 p-5 space-y-4">
+    <form onSubmit={salvar} className="rounded-lg border border-creme-200 p-5 space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <Campo label="Nome da pizzaria" value={nome} onChange={setNome} />
         <Campo label="Cidade" value={cidade} onChange={setCidade} />
@@ -58,7 +58,7 @@ export default function FormPizzaria({ pizzaria }: { pizzaria: Pizzaria }) {
         <button
           type="submit"
           disabled={salvando}
-          className="rounded-md bg-brasa-500 hover:bg-brasa-600 disabled:opacity-60 text-carvao-950 font-semibold px-5 py-2.5 text-sm transition-colors"
+          className="rounded-md bg-menta-500 hover:bg-menta-600 disabled:opacity-60 text-white font-semibold px-5 py-2.5 text-sm transition-colors"
         >
           {salvando ? "Salvando..." : "Salvar alterações"}
         </button>
@@ -81,12 +81,12 @@ function Campo({
 }) {
   return (
     <div>
-      <label className="text-sm text-trigo-200 block mb-1.5">{label}</label>
+      <label className="text-sm text-tinta-700 block mb-1.5">{label}</label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md bg-carvao-800 border border-carvao-700 px-3.5 py-2.5 text-trigo-50 outline-none focus:border-brasa-400"
+        className="w-full rounded-md bg-white border border-creme-200 px-3.5 py-2.5 text-tinta-950 outline-none focus:border-menta-600"
       />
     </div>
   );

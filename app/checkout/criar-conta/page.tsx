@@ -60,37 +60,37 @@ function CriarContaForm() {
     <main className="min-h-screen flex items-center justify-center px-5">
       <div className="max-w-sm w-full">
         <h1 className="font-display text-2xl font-semibold mb-1">Pagamento confirmado</h1>
-        <p className="text-trigo-400 text-sm mb-6">
+        <p className="text-tinta-400 text-sm mb-6">
           Falta só criar sua senha — 30 segundos e você já está no dashboard.
         </p>
 
         <form onSubmit={criarConta} className="space-y-4">
           <div>
-            <label className="text-sm text-trigo-200 block mb-1.5">E-mail</label>
+            <label className="text-sm text-tinta-700 block mb-1.5">E-mail</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md bg-carvao-800 border border-carvao-700 px-3.5 py-2.5 text-trigo-50 outline-none focus:border-brasa-400"
+              className="w-full rounded-md bg-white border border-creme-200 px-3.5 py-2.5 text-tinta-950 outline-none focus:border-menta-600"
             />
           </div>
           <div>
-            <label className="text-sm text-trigo-200 block mb-1.5">Crie uma senha</label>
+            <label className="text-sm text-tinta-700 block mb-1.5">Crie uma senha</label>
             <input
               type="password"
               required
               minLength={8}
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              className="w-full rounded-md bg-carvao-800 border border-carvao-700 px-3.5 py-2.5 text-trigo-50 outline-none focus:border-brasa-400"
+              className="w-full rounded-md bg-white border border-creme-200 px-3.5 py-2.5 text-tinta-950 outline-none focus:border-menta-600"
             />
           </div>
           {erro && <p className="text-sinal-vermelho text-sm">{erro}</p>}
           <button
             type="submit"
             disabled={carregando}
-            className="w-full rounded-md bg-brasa-500 hover:bg-brasa-600 disabled:opacity-60 text-carvao-950 font-semibold py-2.5 transition-colors"
+            className="w-full rounded-md bg-menta-500 hover:bg-menta-600 disabled:opacity-60 text-white font-semibold py-2.5 transition-colors"
           >
             {carregando ? "Criando conta..." : "Entrar no dashboard"}
           </button>

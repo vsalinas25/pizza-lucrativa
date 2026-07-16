@@ -76,7 +76,7 @@ export default function ResumoExecutivo({
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
       {numeros.map((n) => (
-        <div key={n.label} className="rounded-lg border border-carvao-700 p-4">
+        <div key={n.label} className="rounded-lg border border-creme-200 p-4">
           <p
             className={`font-mono text-2xl sm:text-3xl font-semibold tabular-nums ${
               n.tom === "vermelho"
@@ -85,12 +85,12 @@ export default function ResumoExecutivo({
                 ? "text-sinal-amarelo"
                 : n.tom === "verde"
                 ? "text-sinal-verde"
-                : "text-trigo-50"
+                : "text-tinta-950"
             }`}
           >
             {n.valor}
           </p>
-          <p className="text-xs text-trigo-400 mt-1">{n.label}</p>
+          <p className="text-xs text-tinta-400 mt-1">{n.label}</p>
         </div>
       ))}
     </div>

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 export default function TermosPage() {
   return (
     <main className="min-h-screen px-5 py-10 sm:px-8 max-w-2xl mx-auto">
-      <a href="/" className="text-sm text-brasa-400 hover:underline">
+      <a href="/" className="text-sm text-menta-600 hover:underline">
         ← Voltar
       </a>
 
@@ -15,9 +15,9 @@ export default function TermosPage() {
         Termos de Uso, Privacidade e Política de Reembolso
       </h1>
 
-      <div className="space-y-8 text-trigo-200 text-sm leading-relaxed">
+      <div className="space-y-8 text-tinta-700 text-sm leading-relaxed">
         <section>
-          <h2 className="font-display text-lg font-semibold text-trigo-50 mb-2">
+          <h2 className="font-display text-lg font-semibold text-tinta-950 mb-2">
             1. O que você está comprando
           </h2>
           <p>
@@ -37,7 +37,7 @@ export default function TermosPage() {
         </section>
 
         <section>
-          <h2 className="font-display text-lg font-semibold text-trigo-50 mb-2">
+          <h2 className="font-display text-lg font-semibold text-tinta-950 mb-2">
             2. Política de reembolso — garantia de 7 dias
           </h2>
           <p>
@@ -48,7 +48,7 @@ export default function TermosPage() {
           </p>
           <p className="mt-2">
             Para solicitar, envie um e-mail para{" "}
-            <span className="text-brasa-400">hello@victorsalinas.co</span> com o e-mail
+            <span className="text-menta-600">hello@victorsalinas.co</span> com o e-mail
             usado na compra. O reembolso é processado pela mesma forma de pagamento utilizada
             (cartão ou PIX) em até alguns dias úteis, conforme prazo do seu banco ou operadora.
           </p>
@@ -60,7 +60,7 @@ export default function TermosPage() {
         </section>
 
         <section>
-          <h2 className="font-display text-lg font-semibold text-trigo-50 mb-2">
+          <h2 className="font-display text-lg font-semibold text-tinta-950 mb-2">
             3. Dados que coletamos e como usamos
           </h2>
           <p>
@@ -83,11 +83,11 @@ export default function TermosPage() {
         </section>
 
         <section>
-          <h2 className="font-display text-lg font-semibold text-trigo-50 mb-2">4. Contato</h2>
+          <h2 className="font-display text-lg font-semibold text-tinta-950 mb-2">4. Contato</h2>
           <p>
             Achievement Tecnologia Digital LTDA — CNPJ 10.667.458/0001-52
             <br />
-            Suporte: <span className="text-brasa-400">hello@victorsalinas.co</span>
+            Suporte: <span className="text-menta-600">hello@victorsalinas.co</span>
           </p>
         </section>
       </div>

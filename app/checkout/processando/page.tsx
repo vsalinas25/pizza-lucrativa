@@ -68,16 +68,16 @@ function ProcessandoConteudo() {
       <div className="max-w-sm w-full text-center">
         {status === "verificando" && (
           <>
-            <Loader2 className="h-8 w-8 text-brasa-400 animate-spin mx-auto mb-4" />
-            <p className="text-trigo-200">Confirmando seu pagamento...</p>
+            <Loader2 className="h-8 w-8 text-menta-600 animate-spin mx-auto mb-4" />
+            <p className="text-tinta-700">Confirmando seu pagamento...</p>
           </>
         )}
 
         {status === "aguardando_pix" && (
           <>
-            <QrCode className="h-8 w-8 text-brasa-400 mx-auto mb-4" />
+            <QrCode className="h-8 w-8 text-menta-600 mx-auto mb-4" />
             <h1 className="font-display text-xl font-semibold mb-2">Aguardando confirmação do PIX</h1>
-            <p className="text-trigo-400 text-sm mb-4">
+            <p className="text-tinta-400 text-sm mb-4">
               Assim que o pagamento cair, você entra direto no seu dashboard. Não feche esta página.
             </p>
             {qrCode && (
@@ -92,7 +92,7 @@ function ProcessandoConteudo() {
         {status === "erro" && (
           <>
             <p className="text-sinal-vermelho font-medium mb-2">Não encontramos essa sessão de pagamento.</p>
-            <p className="text-trigo-400 text-sm">
+            <p className="text-tinta-400 text-sm">
               Se você já pagou, entre em contato pelo suporte com o comprovante.
             </p>
           </>
