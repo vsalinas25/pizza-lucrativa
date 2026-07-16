@@ -154,6 +154,12 @@ export default function LandingPage() {
         </h2>
         <BotaoComprar texto="Quero acesso vitalício — R$297" tamanho="grande" />
       </section>
+
+      <footer className="px-5 sm:px-8 py-6 border-t border-carvao-700 text-center">
+        <a href="/termos" className="text-xs text-trigo-400 hover:text-trigo-200 underline">
+          Termos de uso, privacidade e política de reembolso
+        </a>
+      </footer>
     </main>
   );
 }
