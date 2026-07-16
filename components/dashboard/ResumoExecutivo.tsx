@@ -51,11 +51,16 @@ export default function ResumoExecutivo({
     );
   }, 0);
 
+  // Mensalidades fixas dos canais (ex: R$110/mês do iFood) entram como
+  // despesa fixa do negócio — não são % sobre o preço, então não cabem em
+  // custosVariaveisTotais.
+  const mensalidadesCanais = canais.reduce((acc, canal) => acc + canal.custo_fixo_mensal, 0);
+
   const margemLiquida = calcularMargemLiquidaGlobal({
     receitaTotal,
     cmvTotal,
     custosVariaveisTotais,
-    despesasFixas: pizzaria.despesas_fixas_mensais,
+    despesasFixas: pizzaria.despesas_fixas_mensais + mensalidadesCanais,
   });
 
   const metaCMV = 0.3; // meta padrão — futuramente configurável por usuário
@@ -65,7 +70,7 @@ export default function ResumoExecutivo({
     { label: "CMV médio ponderado", valor: formatarPercentual(cmvMedio), tom: cmvMedio > 0.38 ? "vermelho" : cmvMedio > 0.3 ? "amarelo" : "verde" },
     { label: "Margem líquida atual", valor: formatarPercentual(margemLiquida), tom: margemLiquida < 0 ? "vermelho" : "verde" },
     { label: "Gap até a meta de CMV", valor: `${gapCMV > 0 ? "+" : ""}${formatarPercentual(gapCMV)}`, tom: gapCMV > 0 ? "amarelo" : "verde" },
-    { label: "Despesas fixas / mês", valor: formatarMoeda(pizzaria.despesas_fixas_mensais), tom: "neutro" },
+    { label: "Despesas fixas / mês", valor: formatarMoeda(pizzaria.despesas_fixas_mensais + mensalidadesCanais), tom: "neutro" },
   ] as const;
 
   return (

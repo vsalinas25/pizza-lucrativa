@@ -71,16 +71,47 @@ export interface PrecoPorCanal {
   created_at: string;
 }
 
-// Defaults de comissão de plataforma — atualizados manualmente hoje,
-// e via painel admin + renovação no futuro. Nunca hardcode no componente,
-// sempre puxe daqui para ter um único lugar de manutenção.
-export const DEFAULT_TAXAS_PLATAFORMA: Record<NomeCanal, { comissao_percentual: number; label: string }> = {
-  site: { comissao_percentual: 0, label: "Site próprio" },
-  ifood: { comissao_percentual: 27, label: "iFood" },
-  keeta: { comissao_percentual: 18, label: "Keeta" },
-  "99food": { comissao_percentual: 12, label: "99Food" },
-  personalizado: { comissao_percentual: 0, label: "Canal personalizado" },
+// Defaults de comissão de plataforma — levantados em 2026-07-13 a partir das
+// tabelas públicas de taxas de iFood, Keeta e 99Food. Atualizados
+// manualmente hoje, e via painel admin + renovação no futuro. Nunca
+// hardcode nos componentes, sempre puxe daqui para ter um único lugar de
+// manutenção.
+//
+// Cada plataforma tem mais de um plano comercial — o default aqui é o
+// plano "entrega própria do restaurante" (o mais comum e mais barato),
+// não o plano de logística completa da plataforma. Quem usa a frota da
+// própria plataforma (iFood Full, etc.) deve ajustar em /configuracoes:
+//   iFood Full (entrega pelo app): comissão 23–27%, mensalidade R$150/mês
+//   Keeta: comissão 9,9–16% (9,9% é taxa promocional de 1 ano)
+//   99Food Flex: comissão 8,9–12% + ~4,5–11% se usar entregador da 99;
+//     99Food Plano Fixo: 0% de comissão, mas obriga preço igual ao balcão
+export const DEFAULT_TAXAS_PLATAFORMA: Record<
+  NomeCanal,
+  {
+    comissao_percentual: number;
+    taxa_transacao_percentual: number;
+    custo_fixo_mensal: number;
+    label: string;
+  }
+> = {
+  site: { comissao_percentual: 0, taxa_transacao_percentual: 0, custo_fixo_mensal: 0, label: "Site próprio" },
+  ifood: {
+    comissao_percentual: 12, // plano básico, entrega própria
+    taxa_transacao_percentual: 3.2, // taxa de pagamento online
+    custo_fixo_mensal: 110, // isenta se faturar < R$1.800/mês
+    label: "iFood",
+  },
+  keeta: {
+    comissao_percentual: 12, // meio da faixa 9,9%–16% fora de período promocional
+    taxa_transacao_percentual: 1,
+    custo_fixo_mensal: 0, // sem mensalidade fixa
+    label: "Keeta",
+  },
+  "99food": {
+    comissao_percentual: 8.9, // plano Flex
+    taxa_transacao_percentual: 3.2,
+    custo_fixo_mensal: 0, // sem mensalidade fixa
+    label: "99Food",
+  },
+  personalizado: { comissao_percentual: 0, taxa_transacao_percentual: 0, custo_fixo_mensal: 0, label: "Canal personalizado" },
 };
-// ⚠️ Estes números são placeholders de exemplo — validar taxa real vigente
-// de cada plataforma antes de lançar. É exatamente o dado que a renovação
-// anual (R$97) existe para manter atualizado.

@@ -40,9 +40,9 @@ export default function ListaCanais({
       pizzaria_id: pizzariaId,
       nome: canalParaAdicionar,
       comissao_percentual: DEFAULT_TAXAS_PLATAFORMA[canalParaAdicionar].comissao_percentual,
-      taxa_transacao_percentual: 0,
+      taxa_transacao_percentual: DEFAULT_TAXAS_PLATAFORMA[canalParaAdicionar].taxa_transacao_percentual,
       taxa_marketing_percentual: 0,
-      custo_fixo_mensal: 0,
+      custo_fixo_mensal: DEFAULT_TAXAS_PLATAFORMA[canalParaAdicionar].custo_fixo_mensal,
       percentual_participacao_mix: 0,
     });
     setAdicionando(false);

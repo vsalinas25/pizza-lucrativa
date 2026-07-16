@@ -70,9 +70,9 @@ export default function OnboardingPage() {
       pizzaria_id: pizzaria.id,
       nome: nomeCanal,
       comissao_percentual: DEFAULT_TAXAS_PLATAFORMA[nomeCanal].comissao_percentual,
-      taxa_transacao_percentual: 0,
+      taxa_transacao_percentual: DEFAULT_TAXAS_PLATAFORMA[nomeCanal].taxa_transacao_percentual,
       taxa_marketing_percentual: 0,
-      custo_fixo_mensal: 0,
+      custo_fixo_mensal: DEFAULT_TAXAS_PLATAFORMA[nomeCanal].custo_fixo_mensal,
       percentual_participacao_mix: Math.round(100 / canaisAtivos.length),
     }));
 
