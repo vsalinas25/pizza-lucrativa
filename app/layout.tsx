@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Sora, Inter, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// Sora: sans-serif bold e arredondada, no espírito de fintechs modernas
-// (Payard, Plutus) para headings.
-const fontDisplay = Sora({
+// Space Grotesk: geométrica, caráter distinto (referência tech/fintech
+// moderna) para headings — mais memorável que uma sans genérica.
+const fontDisplay = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["600", "700", "800"],
+  weight: ["500", "600", "700"],
 });
-// Inter: leitura limpa para corpo e dados financeiros.
-const fontBody = Inter({ subsets: ["latin"], variable: "--font-body" });
+// DM Sans: par pensado para Space Grotesk — leitura limpa para corpo e dados.
+const fontBody = DM_Sans({ subsets: ["latin"], variable: "--font-body" });
 // JetBrains Mono: números/tabelas de CMV — tabular figures de verdade.
 const fontMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 

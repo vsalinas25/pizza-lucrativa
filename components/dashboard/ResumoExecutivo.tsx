@@ -66,28 +66,39 @@ export default function ResumoExecutivo({
   const metaCMV = 0.3; // meta padrão — futuramente configurável por usuário
   const gapCMV = cmvMedio - metaCMV;
 
+  const destaque = {
+    label: "CMV médio ponderado",
+    valor: formatarPercentual(cmvMedio),
+    tom: cmvMedio > 0.38 ? "vermelho" : cmvMedio > 0.3 ? "amarelo" : "verde",
+  } as const;
+
   const numeros = [
-    { label: "CMV médio ponderado", valor: formatarPercentual(cmvMedio), tom: cmvMedio > 0.38 ? "vermelho" : cmvMedio > 0.3 ? "amarelo" : "verde" },
     { label: "Margem líquida atual", valor: formatarPercentual(margemLiquida), tom: margemLiquida < 0 ? "vermelho" : "verde" },
     { label: "Gap até a meta de CMV", valor: `${gapCMV > 0 ? "+" : ""}${formatarPercentual(gapCMV)}`, tom: gapCMV > 0 ? "amarelo" : "verde" },
     { label: "Despesas fixas / mês", valor: formatarMoeda(pizzaria.despesas_fixas_mensais + mensalidadesCanais), tom: "neutro" },
   ] as const;
 
+  const corTom = (tom: string) =>
+    tom === "vermelho"
+      ? "text-sinal-vermelho"
+      : tom === "amarelo"
+      ? "text-sinal-amarelo"
+      : tom === "verde"
+      ? "text-sinal-verde"
+      : "text-tinta-950";
+
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-4 sm:grid-rows-2 gap-4">
+      <div className="sm:col-span-2 sm:row-span-2 rounded-xl border border-menta-100 bg-gradient-to-br from-menta-50 to-white p-6 flex flex-col justify-between shadow-soft">
+        <p className="text-sm text-tinta-400">{destaque.label}</p>
+        <p className={`font-mono text-5xl sm:text-6xl font-semibold tabular-nums ${corTom(destaque.tom)}`}>
+          {destaque.valor}
+        </p>
+        <p className="text-xs text-tinta-400">Meta saudável: até 30%</p>
+      </div>
       {numeros.map((n) => (
-        <div key={n.label} className="rounded-lg border border-creme-200 p-4">
-          <p
-            className={`font-mono text-2xl sm:text-3xl font-semibold tabular-nums ${
-              n.tom === "vermelho"
-                ? "text-sinal-vermelho"
-                : n.tom === "amarelo"
-                ? "text-sinal-amarelo"
-                : n.tom === "verde"
-                ? "text-sinal-verde"
-                : "text-tinta-950"
-            }`}
-          >
+        <div key={n.label} className="rounded-xl border border-creme-200 bg-white p-4 shadow-soft">
+          <p className={`font-mono text-2xl sm:text-3xl font-semibold tabular-nums ${corTom(n.tom)}`}>
             {n.valor}
           </p>
           <p className="text-xs text-tinta-400 mt-1">{n.label}</p>

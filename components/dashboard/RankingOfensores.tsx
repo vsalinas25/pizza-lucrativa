@@ -31,7 +31,7 @@ export default function RankingOfensores({
   }
 
   return (
-    <div className="rounded-lg border border-creme-200 p-5">
+    <div className="rounded-lg border border-creme-200 bg-white shadow-soft hover:shadow-card transition-shadow duration-200 p-5">
       <h2 className="font-display text-lg font-semibold mb-4">Piores ofensores</h2>
       <div className="space-y-3">
         {ofensores.map((o, i) => (

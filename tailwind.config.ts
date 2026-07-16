@@ -41,9 +41,24 @@ const config: Config = {
         mono: ["var(--font-mono)", "monospace"],
       },
       borderRadius: {
-        sm: "6px",
-        md: "10px",
-        lg: "18px",
+        sm: "8px",
+        md: "14px",
+        lg: "22px",
+        xl: "28px",
+      },
+      boxShadow: {
+        soft: "0 2px 10px -2px rgba(24, 26, 23, 0.06)",
+        card: "0 8px 30px -8px rgba(24, 26, 23, 0.10)",
+        lift: "0 16px 40px -12px rgba(63, 168, 113, 0.28)",
+      },
+      keyframes: {
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(12px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        "fade-up": "fade-up 0.5s ease-out both",
       },
     },
   },

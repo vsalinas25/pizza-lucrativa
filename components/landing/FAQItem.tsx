@@ -7,18 +7,18 @@ export default function FAQItem({ pergunta, resposta }: { pergunta: string; resp
   const [aberto, setAberto] = useState(false);
 
   return (
-    <div className="rounded-md border border-creme-200 overflow-hidden">
+    <div className="rounded-lg border border-creme-200 bg-white overflow-hidden shadow-soft">
       <button
         onClick={() => setAberto((a) => !a)}
-        className="w-full flex items-center justify-between px-4 py-3.5 text-left"
+        className="w-full flex items-center justify-between px-5 py-4 text-left"
         aria-expanded={aberto}
       >
         <span className="font-medium text-tinta-950 text-sm sm:text-base">{pergunta}</span>
         <ChevronDown
-          className={`h-4 w-4 text-tinta-400 shrink-0 transition-transform ${aberto ? "rotate-180" : ""}`}
+          className={`h-4 w-4 text-menta-600 shrink-0 transition-transform duration-200 ${aberto ? "rotate-180" : ""}`}
         />
       </button>
-      {aberto && <p className="px-4 pb-4 text-tinta-400 text-sm">{resposta}</p>}
+      {aberto && <p className="px-5 pb-4 text-tinta-400 text-sm animate-fade-up">{resposta}</p>}
     </div>
   );
 }

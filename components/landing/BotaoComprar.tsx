@@ -27,7 +27,7 @@ export default function BotaoComprar({
     <button
       onClick={iniciarCheckout}
       disabled={carregando}
-      className={`w-full sm:w-auto inline-flex items-center justify-center rounded-md bg-menta-500 hover:bg-menta-600 disabled:opacity-60 text-white font-semibold transition-colors ${
+      className={`w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-gradient-to-r from-menta-500 to-menta-600 hover:shadow-lift disabled:opacity-60 disabled:hover:shadow-none text-white font-semibold transition-all duration-200 active:scale-[0.97] ${
         tamanho === "grande" ? "px-8 py-4 text-base" : "px-5 py-2.5 text-sm"
       }`}
     >

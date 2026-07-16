@@ -44,7 +44,7 @@ export default function FormPizzaria({ pizzaria }: { pizzaria: Pizzaria }) {
   }
 
   return (
-    <form onSubmit={salvar} className="rounded-lg border border-creme-200 p-5 space-y-4">
+    <form onSubmit={salvar} className="rounded-lg border border-creme-200 bg-white shadow-soft hover:shadow-card transition-shadow duration-200 p-5 space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <Campo label="Nome da pizzaria" value={nome} onChange={setNome} />
         <Campo label="Cidade" value={cidade} onChange={setCidade} />

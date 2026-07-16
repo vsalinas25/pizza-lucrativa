@@ -17,7 +17,7 @@ export default function ComparativoCanais({
   const pizza = pizzas.find((p) => p.id === pizzaId);
 
   return (
-    <div className="rounded-lg border border-creme-200 p-5">
+    <div className="rounded-lg border border-creme-200 bg-white shadow-soft hover:shadow-card transition-shadow duration-200 p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-lg font-semibold">Comparativo entre canais</h2>
         <select

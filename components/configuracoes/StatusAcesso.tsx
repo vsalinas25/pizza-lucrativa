@@ -17,7 +17,7 @@ export default function StatusAcesso({
   renovacaoAtiva: boolean;
 }) {
   return (
-    <div className="rounded-lg border border-creme-200 p-5 space-y-5">
+    <div className="rounded-lg border border-creme-200 bg-white shadow-soft hover:shadow-card transition-shadow duration-200 p-5 space-y-5">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-tinta-950 font-medium">Acesso vitalício ao dashboard</p>

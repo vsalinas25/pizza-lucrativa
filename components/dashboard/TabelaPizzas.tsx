@@ -36,7 +36,7 @@ export default function TabelaPizzas({
   }
 
   return (
-    <div className="rounded-lg border border-creme-200 overflow-x-auto">
+    <div className="rounded-lg border border-creme-200 bg-white shadow-soft hover:shadow-card transition-shadow duration-200 overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-creme-200 text-left">

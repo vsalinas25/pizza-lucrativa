@@ -56,7 +56,7 @@ export default function ListaCanais({
   return (
     <div className="space-y-4">
       {canaisIniciais.map((canal) => (
-        <div key={canal.id} className="rounded-lg border border-creme-200 p-5">
+        <div key={canal.id} className="rounded-lg border border-creme-200 bg-white shadow-soft hover:shadow-card transition-shadow duration-200 p-5">
           <div className="flex items-center justify-between mb-4">
             <p className="font-medium text-tinta-950">
               {DEFAULT_TAXAS_PLATAFORMA[canal.nome]?.label ?? canal.nome}

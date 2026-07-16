@@ -32,7 +32,7 @@ export default function PainelSimulacao({
   }, [pizza, preco, cmvAlvoPct]);
 
   return (
-    <div className="rounded-lg border border-creme-200 p-5 space-y-4 h-fit">
+    <div className="rounded-lg border border-creme-200 bg-white shadow-soft hover:shadow-card transition-shadow duration-200 p-5 space-y-4 h-fit">
       <h2 className="font-display text-lg font-semibold">Simulador de margem</h2>
 
       <div>
