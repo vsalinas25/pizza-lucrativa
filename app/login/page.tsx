@@ -53,6 +53,9 @@ function LoginForm() {
   return (
     <main className="min-h-screen flex items-center justify-center px-5">
       <div className="max-w-sm w-full">
+        <a href="/" className="text-sm text-brasa-400 hover:underline block mb-6">
+          ← Voltar
+        </a>
         <h1 className="font-display text-2xl font-semibold mb-6">
           {modoRecuperar ? "Recuperar senha" : "Entrar"}
         </h1>
