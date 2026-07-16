@@ -37,15 +37,27 @@ export async function POST(request: Request) {
     metadata: { tipo: "compra_unica" },
   });
 
-  // Registra a sessão como 'pending' já aqui, para o webhook só precisar atualizar status
+  // Registra a sessão como 'pending' já aqui, para o webhook só precisar atualizar status.
+  // Se isso falhar, a sessão do Stripe fica órfã (paga sem nenhum jeito de
+  // vinculá-la a uma compra depois) — por isso expira a sessão e recusa o
+  // checkout em vez de deixar o cliente pagar por um registro que não existe.
   const supabase = createServiceRoleClient();
-  await supabase.from("purchases").insert({
+  const { error } = await supabase.from("purchases").insert({
     user_id: null, // preenchido depois da criação da conta, ver /checkout/processando
     stripe_session_id: session.id,
     status: "pending",
     tipo: "compra_unica",
     valor: PRECO_COMPRA_CENTAVOS / 100,
   });
+
+  if (error) {
+    console.error("Falha ao registrar purchase pendente:", error);
+    await stripe.checkout.sessions.expire(session.id).catch(() => {});
+    return NextResponse.json(
+      { error: "Não foi possível iniciar o checkout. Tente novamente em alguns segundos." },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json({ url: session.url });
 }

@@ -46,13 +46,25 @@ export async function POST(request: Request) {
     metadata: { tipo: "renovacao", user_id: user.id },
   });
 
+  // Mesmo racional do /api/checkout: se o insert falhar, a sessão vira uma
+  // cobrança órfã sem jeito de vincular depois — expira e recusa em vez
+  // disso.
   const svc = createServiceRoleClient();
-  await svc.from("renovacoes").insert({
+  const { error } = await svc.from("renovacoes").insert({
     user_id: user.id,
     stripe_session_id: session.id,
     status: "pending",
     valor: PRECO_RENOVACAO_CENTAVOS / 100,
   });
+
+  if (error) {
+    console.error("Falha ao registrar renovação pendente:", error);
+    await stripe.checkout.sessions.expire(session.id).catch(() => {});
+    return NextResponse.json(
+      { error: "Não foi possível iniciar a renovação. Tente novamente em alguns segundos." },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json({ url: session.url });
 }
