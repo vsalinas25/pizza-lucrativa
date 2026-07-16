@@ -48,7 +48,7 @@ export default function TermosPage() {
           </p>
           <p className="mt-2">
             Para solicitar, envie um e-mail para{" "}
-            <span className="text-brasa-400">[preencher e-mail de suporte]</span> com o e-mail
+            <span className="text-brasa-400">hello@victorsalinas.co</span> com o e-mail
             usado na compra. O reembolso é processado pela mesma forma de pagamento utilizada
             (cartão ou PIX) em até alguns dias úteis, conforme prazo do seu banco ou operadora.
           </p>
@@ -85,9 +85,9 @@ export default function TermosPage() {
         <section>
           <h2 className="font-display text-lg font-semibold text-trigo-50 mb-2">4. Contato</h2>
           <p>
-            <span className="text-brasa-400">[preencher razão social / CNPJ]</span>
+            Achievement Tecnologia Digital LTDA — CNPJ 10.667.458/0001-52
             <br />
-            Suporte: <span className="text-brasa-400">[preencher e-mail de suporte]</span>
+            Suporte: <span className="text-brasa-400">hello@victorsalinas.co</span>
           </p>
         </section>
       </div>
