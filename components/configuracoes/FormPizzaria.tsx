@@ -58,7 +58,7 @@ export default function FormPizzaria({ pizzaria }: { pizzaria: Pizzaria }) {
         <button
           type="submit"
           disabled={salvando}
-          className="rounded-md bg-menta-500 hover:bg-menta-600 disabled:opacity-60 text-white font-semibold px-5 py-2.5 text-sm transition-colors"
+          className="rounded-full bg-gradient-to-r from-menta-500 to-menta-600 hover:shadow-lift disabled:opacity-60 disabled:hover:shadow-none text-white font-semibold px-6 py-2.5 text-sm transition-all duration-200 active:scale-[0.97]"
         >
           {salvando ? "Salvando..." : "Salvar alterações"}
         </button>

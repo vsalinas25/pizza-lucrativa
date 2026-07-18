@@ -3,6 +3,7 @@ import { getStatusAcesso } from "@/lib/acesso";
 import FormPizzaria from "@/components/configuracoes/FormPizzaria";
 import ListaCanais from "@/components/configuracoes/ListaCanais";
 import StatusAcesso from "@/components/configuracoes/StatusAcesso";
+import BarraNavegacao from "@/components/dashboard/BarraNavegacao";
 
 export default async function ConfiguracoesPage() {
   const supabase = createClient();
@@ -60,12 +61,19 @@ export default async function ConfiguracoesPage() {
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 max-w-3xl mx-auto space-y-10">
-      <header>
+      <BarraNavegacao
+        pizzariaNome={pizzaria.nome}
+        cidade={pizzaria.cidade}
+        paginaAtiva="configuracoes"
+        renovacaoAtiva={temRenovacaoAtiva}
+      />
+
+      <div>
         <h1 className="font-display text-2xl font-semibold">Configurações</h1>
         <p className="text-tinta-400 text-sm mt-1">
           Dados da pizzaria, canais de venda e status de acesso.
         </p>
-      </header>
+      </div>
 
       <section className="space-y-4">
         <h2 className="font-display text-lg font-semibold">Sua pizzaria</h2>

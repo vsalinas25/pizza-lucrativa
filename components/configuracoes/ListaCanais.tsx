@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2 } from "lucide-react";
+import { Trash2, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_TAXAS_PLATAFORMA, type CanalVenda, type NomeCanal } from "@/types";
 
@@ -112,7 +112,7 @@ export default function ListaCanais({
           <select
             value={canalParaAdicionar}
             onChange={(e) => setCanalParaAdicionar(e.target.value as NomeCanal)}
-            className="rounded-md bg-white border border-creme-200 px-3 py-2 text-sm"
+            className="rounded-full bg-white border border-creme-200 px-4 py-2 text-sm"
           >
             {canaisDisponiveisParaAdicionar.map((c) => (
               <option key={c} value={c}>
@@ -123,8 +123,9 @@ export default function ListaCanais({
           <button
             onClick={adicionarCanal}
             disabled={adicionando}
-            className="rounded-md border border-creme-200 hover:border-menta-600 hover:text-menta-600 disabled:opacity-60 text-tinta-700 px-4 py-2 text-sm transition-colors"
+            className="flex items-center gap-1.5 rounded-full border border-creme-200 bg-white hover:border-menta-600 hover:text-menta-600 disabled:opacity-60 text-tinta-700 px-4 py-2 text-sm transition-colors shadow-soft"
           >
+            <Plus className="h-3.5 w-3.5" />
             {adicionando ? "Adicionando..." : "Adicionar canal"}
           </button>
         </div>

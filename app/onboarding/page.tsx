@@ -28,6 +28,8 @@ export default function OnboardingPage() {
   // Passo 3: import CSV opcional
   const [csvPizzas, setCsvPizzas] = useState<{ nome: string; custo: number; preco: number }[]>([]);
   const [pizzariaId, setPizzariaId] = useState<string | null>(null);
+  const [canalPadraoId, setCanalPadraoId] = useState<string | null>(null);
+  const [canalPadraoNome, setCanalPadraoNome] = useState<string | null>(null);
 
   function alternarCanal(canal: NomeCanal) {
     setCanaisAtivos((atual) =>
@@ -76,7 +78,18 @@ export default function OnboardingPage() {
       percentual_participacao_mix: Math.round(100 / canaisAtivos.length),
     }));
 
-    await supabase.from("canais_venda").insert(canaisPayload);
+    const { data: canaisCriados } = await supabase
+      .from("canais_venda")
+      .insert(canaisPayload)
+      .select();
+
+    // Canal padrão pra associar os preços importados via CSV — o arquivo só
+    // tem um preço por pizza, sem indicar canal, então usamos "site" se
+    // ativo, senão o primeiro canal criado.
+    const canalPadrao =
+      canaisCriados?.find((c) => c.nome === "site") ?? canaisCriados?.[0] ?? null;
+    setCanalPadraoId(canalPadrao?.id ?? null);
+    setCanalPadraoNome(canalPadrao ? DEFAULT_TAXAS_PLATAFORMA[canalPadrao.nome as NomeCanal].label : null);
 
     setCarregando(false);
     setPasso(3);
@@ -106,12 +119,27 @@ export default function OnboardingPage() {
 
     if (pizzariaId && csvPizzas.length > 0) {
       for (const p of csvPizzas) {
-        await supabase.from("pizzas").insert({
-          pizzaria_id: pizzariaId,
-          nome: p.nome,
-          categoria: "tradicional",
-          custo_ficha_tecnica: p.custo,
-        });
+        const { data: pizza } = await supabase
+          .from("pizzas")
+          .insert({
+            pizzaria_id: pizzariaId,
+            nome: p.nome,
+            categoria: "tradicional",
+            custo_ficha_tecnica: p.custo,
+          })
+          .select()
+          .single();
+
+        // Sem isso, o preço da planilha era lido e depois descartado — a
+        // pizza aparecia no dashboard com CMV 0% até o preço ser digitado
+        // manualmente de novo.
+        if (pizza && canalPadraoId && p.preco > 0) {
+          await supabase.from("precos_por_canal").insert({
+            pizza_id: pizza.id,
+            canal_id: canalPadraoId,
+            preco_atual: p.preco,
+          });
+        }
       }
     }
 
@@ -137,7 +165,7 @@ export default function OnboardingPage() {
           <button
             onClick={() => setPasso(2)}
             disabled={!nome}
-            className="w-full rounded-md bg-menta-500 hover:bg-menta-600 disabled:opacity-40 text-white font-semibold py-2.5"
+            className="w-full rounded-full bg-gradient-to-r from-menta-500 to-menta-600 hover:shadow-lift disabled:opacity-40 disabled:hover:shadow-none text-white font-semibold py-3 transition-all duration-200 active:scale-[0.98]"
           >
             Continuar
           </button>
@@ -151,7 +179,7 @@ export default function OnboardingPage() {
             {CANAIS_DISPONIVEIS.map((canal) => (
               <label
                 key={canal}
-                className="flex items-center gap-3 rounded-md border border-creme-200 px-4 py-3 cursor-pointer"
+                className="flex items-center gap-3 rounded-md border border-creme-200 bg-white px-4 py-3 cursor-pointer hover:border-menta-500 transition-colors"
               >
                 <input
                   type="checkbox"
@@ -166,13 +194,21 @@ export default function OnboardingPage() {
               </label>
             ))}
           </div>
-          <button
-            onClick={salvarPizzariaECanais}
-            disabled={carregando || canaisAtivos.length === 0}
-            className="w-full rounded-md bg-menta-500 hover:bg-menta-600 disabled:opacity-40 text-white font-semibold py-2.5"
-          >
-            {carregando ? "Salvando..." : "Continuar"}
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setPasso(1)}
+              className="rounded-full border border-creme-200 bg-white text-tinta-700 hover:border-menta-500 hover:text-menta-600 font-semibold px-5 py-3 text-sm transition-colors"
+            >
+              Voltar
+            </button>
+            <button
+              onClick={salvarPizzariaECanais}
+              disabled={carregando || canaisAtivos.length === 0}
+              className="flex-1 rounded-full bg-gradient-to-r from-menta-500 to-menta-600 hover:shadow-lift disabled:opacity-40 disabled:hover:shadow-none text-white font-semibold py-3 transition-all duration-200 active:scale-[0.98]"
+            >
+              {carregando ? "Salvando..." : "Continuar"}
+            </button>
+          </div>
         </div>
       )}
 
@@ -181,6 +217,13 @@ export default function OnboardingPage() {
           <h1 className="font-display text-2xl font-semibold mb-2">Importar pizzas (opcional)</h1>
           <p className="text-tinta-400 text-sm mb-4">
             CSV com colunas: nome, custo, preco. Pode pular e cadastrar direto no dashboard.
+            {canalPadraoNome && (
+              <>
+                {" "}
+                O preço da planilha é gravado no canal <strong className="text-tinta-700">{canalPadraoNome}</strong> —
+                dá pra ajustar por canal depois, direto na tabela do dashboard.
+              </>
+            )}
           </p>
           <input
             type="file"
@@ -194,7 +237,7 @@ export default function OnboardingPage() {
           <button
             onClick={finalizarOnboarding}
             disabled={carregando}
-            className="w-full rounded-md bg-menta-500 hover:bg-menta-600 disabled:opacity-40 text-white font-semibold py-2.5"
+            className="w-full rounded-full bg-gradient-to-r from-menta-500 to-menta-600 hover:shadow-lift disabled:opacity-40 disabled:hover:shadow-none text-white font-semibold py-3 transition-all duration-200 active:scale-[0.98]"
           >
             {carregando ? "Finalizando..." : "Ir para o dashboard"}
           </button>

@@ -1,4 +1,3 @@
-import { Settings } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getStatusAcesso } from "@/lib/acesso";
 import ResumoExecutivo from "@/components/dashboard/ResumoExecutivo";
@@ -6,7 +5,7 @@ import TabelaPizzas from "@/components/dashboard/TabelaPizzas";
 import PainelSimulacao from "@/components/dashboard/PainelSimulacao";
 import RankingOfensores from "@/components/dashboard/RankingOfensores";
 import ComparativoCanais from "@/components/dashboard/ComparativoCanais";
-import BadgeRenovacao from "@/components/dashboard/BadgeRenovacao";
+import BarraNavegacao from "@/components/dashboard/BarraNavegacao";
 
 export default async function DashboardPage() {
   const supabase = createClient();
@@ -52,28 +51,17 @@ export default async function DashboardPage() {
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 max-w-6xl mx-auto space-y-8">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-semibold">{pizzaria.nome}</h1>
-          <p className="text-tinta-400 text-sm">{pizzaria.cidade}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <BadgeRenovacao renovacaoAtiva={temRenovacaoAtiva} />
-          <a
-            href="/configuracoes"
-            className="text-tinta-400 hover:text-menta-600 transition-colors"
-            aria-label="Configurações"
-            title="Configurações"
-          >
-            <Settings className="h-5 w-5" />
-          </a>
-        </div>
-      </header>
+      <BarraNavegacao
+        pizzariaNome={pizzaria.nome}
+        cidade={pizzaria.cidade}
+        paginaAtiva="dashboard"
+        renovacaoAtiva={temRenovacaoAtiva}
+      />
 
       <ResumoExecutivo pizzaria={pizzaria} pizzas={pizzas ?? []} canais={canais ?? []} />
 
       <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-        <TabelaPizzas pizzas={pizzas ?? []} canais={canais ?? []} />
+        <TabelaPizzas pizzas={pizzas ?? []} canais={canais ?? []} pizzariaId={pizzaria.id} />
         <PainelSimulacao pizzas={pizzas ?? []} canais={canais ?? []} />
       </div>
 

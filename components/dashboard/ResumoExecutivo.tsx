@@ -26,42 +26,51 @@ export default function ResumoExecutivo({
   );
   const cmvMedio = calcularCMVMedioPonderado(itensCMV);
 
-  const receitaTotal = pizzas.reduce(
-    (acc, pizza) => acc + pizza.precos_por_canal.reduce((a, pc) => a + pc.preco_atual, 0),
-    0
-  );
-  const cmvTotal = pizzas.reduce(
-    (acc, pizza) =>
-      acc + pizza.precos_por_canal.reduce((a) => a + pizza.custo_ficha_tecnica, 0),
-    0
-  );
-  const custosVariaveisTotais = pizzas.reduce((acc, pizza) => {
-    return (
-      acc +
-      pizza.precos_por_canal.reduce((a, pc) => {
-        const canal = canais.find((c) => c.id === pc.canal_id);
-        if (!canal) return a;
-        const taxaFracao =
-          (canal.comissao_percentual +
-            canal.taxa_transacao_percentual +
-            canal.taxa_marketing_percentual) /
-          100;
-        return a + pc.preco_atual * taxaFracao;
-      }, 0)
-    );
-  }, 0);
+  // Estimativa de receita/CMV/custos variáveis a partir do volume mensal
+  // real (pizzaria.volume_mensal_pizzas), distribuído igualmente entre as
+  // pizzas cadastradas e ponderado pela participação de cada canal no mix
+  // (canal.percentual_participacao_mix). Sem isso, somar preços unitários
+  // brutos como se cada combinação pizza×canal fosse "1 venda" produz
+  // margem líquida sem nenhum sentido (ex: -19000%) assim que comparada às
+  // despesas fixas mensais reais.
+  const volumePorPizza = pizzas.length > 0 ? pizzaria.volume_mensal_pizzas / pizzas.length : 0;
+
+  let receitaTotal = 0;
+  let cmvTotal = 0;
+  let custosVariaveisTotais = 0;
+
+  for (const pizza of pizzas) {
+    for (const pc of pizza.precos_por_canal) {
+      const canal = canais.find((c) => c.id === pc.canal_id);
+      if (!canal || pc.preco_atual <= 0) continue;
+
+      const unidades = volumePorPizza * (canal.percentual_participacao_mix / 100);
+      const taxaFracao =
+        (canal.comissao_percentual + canal.taxa_transacao_percentual + canal.taxa_marketing_percentual) /
+        100;
+
+      receitaTotal += pc.preco_atual * unidades;
+      cmvTotal += pizza.custo_ficha_tecnica * unidades;
+      custosVariaveisTotais += pc.preco_atual * taxaFracao * unidades;
+    }
+  }
 
   // Mensalidades fixas dos canais (ex: R$110/mês do iFood) entram como
   // despesa fixa do negócio — não são % sobre o preço, então não cabem em
   // custosVariaveisTotais.
   const mensalidadesCanais = canais.reduce((acc, canal) => acc + canal.custo_fixo_mensal, 0);
+  const despesasFixasTotais = pizzaria.despesas_fixas_mensais + mensalidadesCanais;
 
-  const margemLiquida = calcularMargemLiquidaGlobal({
-    receitaTotal,
-    cmvTotal,
-    custosVariaveisTotais,
-    despesasFixas: pizzaria.despesas_fixas_mensais + mensalidadesCanais,
-  });
+  const temDadosSuficientes = pizzaria.volume_mensal_pizzas > 0 && receitaTotal > 0;
+
+  const margemLiquida = temDadosSuficientes
+    ? calcularMargemLiquidaGlobal({
+        receitaTotal,
+        cmvTotal,
+        custosVariaveisTotais,
+        despesasFixas: despesasFixasTotais,
+      })
+    : null;
 
   const metaCMV = 0.3; // meta padrão — futuramente configurável por usuário
   const gapCMV = cmvMedio - metaCMV;
@@ -73,9 +82,13 @@ export default function ResumoExecutivo({
   } as const;
 
   const numeros = [
-    { label: "Margem líquida atual", valor: formatarPercentual(margemLiquida), tom: margemLiquida < 0 ? "vermelho" : "verde" },
+    {
+      label: "Margem líquida atual",
+      valor: margemLiquida !== null ? formatarPercentual(margemLiquida) : "—",
+      tom: margemLiquida === null ? "neutro" : margemLiquida < 0 ? "vermelho" : "verde",
+    },
     { label: "Gap até a meta de CMV", valor: `${gapCMV > 0 ? "+" : ""}${formatarPercentual(gapCMV)}`, tom: gapCMV > 0 ? "amarelo" : "verde" },
-    { label: "Despesas fixas / mês", valor: formatarMoeda(pizzaria.despesas_fixas_mensais + mensalidadesCanais), tom: "neutro" },
+    { label: "Despesas fixas / mês", valor: formatarMoeda(despesasFixasTotais), tom: "neutro" },
   ] as const;
 
   const corTom = (tom: string) =>
@@ -101,7 +114,14 @@ export default function ResumoExecutivo({
           <p className={`font-mono text-2xl sm:text-3xl font-semibold tabular-nums ${corTom(n.tom)}`}>
             {n.valor}
           </p>
-          <p className="text-xs text-tinta-400 mt-1">{n.label}</p>
+          <p className="text-xs text-tinta-400 mt-1">
+            {n.label}
+            {n.label === "Margem líquida atual" && margemLiquida === null && (
+              <span className="block text-[11px] mt-0.5">
+                Preencha o volume mensal de pizzas em Configurações
+              </span>
+            )}
+          </p>
         </div>
       ))}
     </div>
