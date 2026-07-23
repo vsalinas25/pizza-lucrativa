@@ -12,6 +12,9 @@ import {
   ListOrdered,
   GraduationCap,
   Infinity as InfinityIcon,
+  Wallet,
+  Target,
+  PencilLine,
 } from "lucide-react";
 import BotaoComprar from "@/components/landing/BotaoComprar";
 import VSLPlayer from "@/components/landing/VSLPlayer";
@@ -25,14 +28,19 @@ const DORES = [
 ];
 
 const METODO = [
-  { icone: Calculator, t: "CMV real por pizza", d: "O que cada pizza custa de verdade — ficha técnica completa.", destaque: true },
-  { icone: Route, t: "Preço por canal", d: "Site, iFood, Keeta, 99Food — cada um com sua taxa, cada um com seu preço certo." },
+  { icone: Calculator, t: "CMV real por pizza", d: "O que cada pizza custa de verdade — ficha técnica completa, editável a qualquer momento.", destaque: true },
+  { icone: Wallet, t: "Lucro em R$, não só em %", d: "Além do CMV, você vê exatamente quanto sobra em reais por pizza, em cada canal." },
+  { icone: Route, t: "Preço por canal", d: "Site, iFood, Keeta, 99Food — cada um com sua taxa real, cada um com seu preço certo." },
   { icone: SlidersHorizontal, t: "Simulação de margem", d: "Define a margem que quer e vê o preço mínimo pra chegar lá." },
+  { icone: Target, t: "Quanto preciso vender?", d: "Diz o quanto quer faturar, lucrar ou cobrir de despesa fixa — a ferramenta calcula quantas pizzas por dia." },
   { icone: Lightbulb, t: "Ação sugerida", d: "Quando o preço ideal não cabe no mercado, a ferramenta sugere a alavanca certa." },
 ];
 
 const INCLUSOS = [
-  { icone: LayoutDashboard, texto: "Dashboard completo de CMV e precificação por canal" },
+  { icone: LayoutDashboard, texto: "Dashboard completo de CMV e margem por canal" },
+  { icone: PencilLine, texto: "Cadastro e edição ilimitada de pizzas, custos e taxas de canal" },
+  { icone: Wallet, texto: "Lucro por pizza em R$ e em %, canal por canal" },
+  { icone: Target, texto: "Simulador de meta: quantas pizzas pra bater faturamento, lucro ou despesas" },
   { icone: Gauge, texto: "Simulador de margem em tempo real" },
   { icone: ListOrdered, texto: "Ranking de piores ofensores de margem" },
   { icone: GraduationCap, texto: "Mini-curso embutido explicando cada número" },
@@ -57,8 +65,9 @@ export default function LandingPage() {
               no seu bolso.
             </h1>
             <p className="mt-5 text-tinta-400 text-base sm:text-lg max-w-xl">
-              Uma ferramenta — não uma planilha de contador — que calcula seu CMV real
-              e o preço certo por canal: site, iFood, Keeta e 99Food.
+              Uma ferramenta — não uma planilha de contador — que calcula seu CMV real,
+              quanto sobra em reais por pizza em cada canal (site, iFood, Keeta, 99Food)
+              e quantas pizzas você precisa vender pra bater sua meta do mês.
             </p>
 
             <div className="mt-7">
