@@ -4,7 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, X, Pencil } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { calcularCMVPercentual, classificarCMV, formatarPercentual, formatarMoeda } from "@/lib/calc";
+import {
+  calcularCMVPercentual,
+  calcularMargemContribuicao,
+  classificarCMV,
+  formatarPercentual,
+  formatarMoeda,
+} from "@/lib/calc";
 import type { Pizza, CanalVenda, PrecoPorCanal, Categoria } from "@/types";
 
 type PizzaComPrecos = Pizza & { precos_por_canal: PrecoPorCanal[] };
@@ -192,6 +198,9 @@ export default function TabelaPizzas({
                     const temPreco = !!preco && preco.preco_atual > 0;
                     const cmv = calcularCMVPercentual(pizza.custo_ficha_tecnica, preco?.preco_atual ?? 0);
                     const nivel = classificarCMV(cmv);
+                    const margem = temPreco
+                      ? calcularMargemContribuicao(preco.preco_atual, pizza.custo_ficha_tecnica, canal)
+                      : null;
                     const key = `${pizza.id}-${canal.id}`;
 
                     return (
@@ -209,9 +218,15 @@ export default function TabelaPizzas({
                         ) : temPreco ? (
                           <button
                             onClick={() => setEditando(key)}
-                            className={`rounded-md px-2.5 py-1 font-mono tabular-nums text-xs font-semibold hover:opacity-80 transition-opacity ${CORES_ALERTA[nivel]}`}
+                            className={`rounded-md px-2.5 py-1.5 font-mono tabular-nums text-xs font-semibold hover:opacity-80 transition-opacity text-left ${CORES_ALERTA[nivel]}`}
                           >
-                            {formatarMoeda(preco.preco_atual)} · {formatarPercentual(cmv)}
+                            <span className="block">{formatarMoeda(preco.preco_atual)} · {formatarPercentual(cmv)}</span>
+                            {margem !== null && (
+                              <span className="block font-normal opacity-80">
+                                {margem >= 0 ? "+" : ""}
+                                {formatarMoeda(margem)} lucro
+                              </span>
+                            )}
                           </button>
                         ) : (
                           <button

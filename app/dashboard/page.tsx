@@ -5,6 +5,7 @@ import TabelaPizzas from "@/components/dashboard/TabelaPizzas";
 import PainelSimulacao from "@/components/dashboard/PainelSimulacao";
 import RankingOfensores from "@/components/dashboard/RankingOfensores";
 import ComparativoCanais from "@/components/dashboard/ComparativoCanais";
+import SimuladorMeta from "@/components/dashboard/SimuladorMeta";
 import BarraNavegacao from "@/components/dashboard/BarraNavegacao";
 
 export default async function DashboardPage() {
@@ -69,6 +70,8 @@ export default async function DashboardPage() {
         <RankingOfensores pizzas={pizzas ?? []} canais={canais ?? []} />
         <ComparativoCanais pizzas={pizzas ?? []} canais={canais ?? []} />
       </div>
+
+      <SimuladorMeta pizzaria={pizzaria} pizzas={pizzas ?? []} canais={canais ?? []} />
     </main>
   );
 }

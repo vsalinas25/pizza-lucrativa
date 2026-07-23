@@ -1,4 +1,4 @@
-import { calcularCMVPercentual, formatarPercentual } from "@/lib/calc";
+import { calcularCMVPercentual, calcularMargemContribuicao, formatarPercentual, formatarMoeda } from "@/lib/calc";
 import type { Pizza, CanalVenda, PrecoPorCanal } from "@/types";
 
 type PizzaComPrecos = Pizza & { precos_por_canal: PrecoPorCanal[] };
@@ -20,6 +20,7 @@ export default function RankingOfensores({
             pizzaNome: pizza.nome,
             canalNome: canal?.nome ?? "—",
             cmv: calcularCMVPercentual(pizza.custo_ficha_tecnica, pc.preco_atual),
+            margem: canal ? calcularMargemContribuicao(pc.preco_atual, pizza.custo_ficha_tecnica, canal) : null,
           };
         })
     )
@@ -44,9 +45,21 @@ export default function RankingOfensores({
                 {o.canalNome} · {acaoSugerida(o.cmv)}
               </p>
             </div>
-            <span className="font-mono text-sm font-semibold text-sinal-vermelho tabular-nums">
-              {formatarPercentual(o.cmv)}
-            </span>
+            <div className="text-right">
+              <span className="block font-mono text-sm font-semibold text-sinal-vermelho tabular-nums">
+                {formatarPercentual(o.cmv)}
+              </span>
+              {o.margem !== null && (
+                <span
+                  className={`block font-mono text-xs tabular-nums ${
+                    o.margem < 0 ? "text-sinal-vermelho" : "text-tinta-400"
+                  }`}
+                >
+                  {o.margem >= 0 ? "+" : ""}
+                  {formatarMoeda(o.margem)}
+                </span>
+              )}
+            </div>
           </div>
         ))}
         {ofensores.length === 0 && (
