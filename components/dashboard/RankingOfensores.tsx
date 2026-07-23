@@ -12,14 +12,16 @@ export default function RankingOfensores({
 }) {
   const ofensores = pizzas
     .flatMap((pizza) =>
-      pizza.precos_por_canal.map((pc) => {
-        const canal = canais.find((c) => c.id === pc.canal_id);
-        return {
-          pizzaNome: pizza.nome,
-          canalNome: canal?.nome ?? "—",
-          cmv: calcularCMVPercentual(pizza.custo_ficha_tecnica, pc.preco_atual),
-        };
-      })
+      pizza.precos_por_canal
+        .filter((pc) => pc.preco_atual > 0) // preço não definido não é "ofensor", é dado ausente
+        .map((pc) => {
+          const canal = canais.find((c) => c.id === pc.canal_id);
+          return {
+            pizzaNome: pizza.nome,
+            canalNome: canal?.nome ?? "—",
+            cmv: calcularCMVPercentual(pizza.custo_ficha_tecnica, pc.preco_atual),
+          };
+        })
     )
     .sort((a, b) => b.cmv - a.cmv)
     .slice(0, 6);

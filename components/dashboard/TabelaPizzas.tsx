@@ -163,6 +163,7 @@ export default function TabelaPizzas({
                 </td>
                 {canais.map((canal) => {
                   const preco = pizza.precos_por_canal.find((pc) => pc.canal_id === canal.id);
+                  const temPreco = !!preco && preco.preco_atual > 0;
                   const cmv = calcularCMVPercentual(pizza.custo_ficha_tecnica, preco?.preco_atual ?? 0);
                   const nivel = classificarCMV(cmv);
                   const key = `${pizza.id}-${canal.id}`;
@@ -179,12 +180,19 @@ export default function TabelaPizzas({
                           }
                           className="w-20 rounded bg-white border border-menta-600 px-2 py-1 text-tinta-950 font-mono"
                         />
-                      ) : (
+                      ) : temPreco ? (
                         <button
                           onClick={() => setEditando(key)}
                           className={`rounded-md px-2.5 py-1 font-mono tabular-nums text-xs font-semibold hover:opacity-80 transition-opacity ${CORES_ALERTA[nivel]}`}
                         >
-                          {formatarMoeda(preco?.preco_atual ?? 0)} · {formatarPercentual(cmv)}
+                          {formatarMoeda(preco.preco_atual)} · {formatarPercentual(cmv)}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setEditando(key)}
+                          className="rounded-md px-2.5 py-1 font-mono text-xs font-medium text-tinta-400 bg-creme-100 hover:bg-creme-200 transition-colors"
+                        >
+                          Definir preço
                         </button>
                       )}
                     </td>

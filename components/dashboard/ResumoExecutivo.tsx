@@ -24,6 +24,7 @@ export default function ResumoExecutivo({
       peso: 1,
     }))
   );
+  const temPrecosDefinidos = itensCMV.length > 0;
   const cmvMedio = calcularCMVMedioPonderado(itensCMV);
 
   // Estimativa de receita/CMV/custos variáveis a partir do volume mensal
@@ -77,8 +78,14 @@ export default function ResumoExecutivo({
 
   const destaque = {
     label: "CMV médio ponderado",
-    valor: formatarPercentual(cmvMedio),
-    tom: cmvMedio > 0.38 ? "vermelho" : cmvMedio > 0.3 ? "amarelo" : "verde",
+    valor: temPrecosDefinidos ? formatarPercentual(cmvMedio) : "—",
+    tom: !temPrecosDefinidos
+      ? "neutro"
+      : cmvMedio > 0.38
+      ? "vermelho"
+      : cmvMedio > 0.3
+      ? "amarelo"
+      : "verde",
   } as const;
 
   const numeros = [
@@ -87,7 +94,11 @@ export default function ResumoExecutivo({
       valor: margemLiquida !== null ? formatarPercentual(margemLiquida) : "—",
       tom: margemLiquida === null ? "neutro" : margemLiquida < 0 ? "vermelho" : "verde",
     },
-    { label: "Gap até a meta de CMV", valor: `${gapCMV > 0 ? "+" : ""}${formatarPercentual(gapCMV)}`, tom: gapCMV > 0 ? "amarelo" : "verde" },
+    {
+      label: "Gap até a meta de CMV",
+      valor: temPrecosDefinidos ? `${gapCMV > 0 ? "+" : ""}${formatarPercentual(gapCMV)}` : "—",
+      tom: !temPrecosDefinidos ? "neutro" : gapCMV > 0 ? "amarelo" : "verde",
+    },
     { label: "Despesas fixas / mês", valor: formatarMoeda(despesasFixasTotais), tom: "neutro" },
   ] as const;
 
@@ -107,7 +118,9 @@ export default function ResumoExecutivo({
         <p className={`font-mono text-5xl sm:text-6xl font-semibold tabular-nums ${corTom(destaque.tom)}`}>
           {destaque.valor}
         </p>
-        <p className="text-xs text-tinta-400">Meta saudável: até 30%</p>
+        <p className="text-xs text-tinta-400">
+          {temPrecosDefinidos ? "Meta saudável: até 30%" : "Defina o preço de ao menos uma pizza para calcular"}
+        </p>
       </div>
       {numeros.map((n) => (
         <div key={n.label} className="rounded-xl border border-creme-200 bg-white p-4 shadow-soft">

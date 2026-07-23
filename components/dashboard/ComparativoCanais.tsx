@@ -37,14 +37,21 @@ export default function ComparativoCanais({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {canais.map((canal) => {
             const preco = pizza.precos_por_canal.find((pc) => pc.canal_id === canal.id);
+            const temPreco = !!preco && preco.preco_atual > 0;
             const cmv = calcularCMVPercentual(pizza.custo_ficha_tecnica, preco?.preco_atual ?? 0);
             return (
-              <div key={canal.id} className="rounded-md bg-white p-3">
+              <div key={canal.id} className="rounded-md bg-creme-50 p-3">
                 <p className="text-xs text-tinta-400 mb-1">{canal.nome}</p>
-                <p className="font-mono text-sm font-semibold text-tinta-950">
-                  {formatarMoeda(preco?.preco_atual ?? 0)}
-                </p>
-                <p className="font-mono text-xs text-menta-600">{formatarPercentual(cmv)} CMV</p>
+                {temPreco ? (
+                  <>
+                    <p className="font-mono text-sm font-semibold text-tinta-950">
+                      {formatarMoeda(preco.preco_atual)}
+                    </p>
+                    <p className="font-mono text-xs text-menta-600">{formatarPercentual(cmv)} CMV</p>
+                  </>
+                ) : (
+                  <p className="font-mono text-xs text-tinta-400">Sem preço definido</p>
+                )}
               </div>
             );
           })}
