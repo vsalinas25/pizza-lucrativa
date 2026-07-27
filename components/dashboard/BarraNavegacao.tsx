@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Settings, LogOut, FlaskConical } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import BadgeRenovacao from "@/components/dashboard/BadgeRenovacao";
 
@@ -13,7 +13,7 @@ export default function BarraNavegacao({
 }: {
   pizzariaNome: string;
   cidade: string | null;
-  paginaAtiva: "dashboard" | "configuracoes";
+  paginaAtiva: "dashboard" | "cenarios" | "configuracoes";
   renovacaoAtiva: boolean;
 }) {
   const router = useRouter();
@@ -44,6 +44,17 @@ export default function BarraNavegacao({
           >
             <LayoutDashboard className="h-4 w-4" strokeWidth={2} />
             <span className="hidden sm:inline">Dashboard</span>
+          </a>
+          <a
+            href="/dashboard/cenarios"
+            className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+              paginaAtiva === "cenarios"
+                ? "bg-menta-500 text-white"
+                : "text-tinta-700 hover:text-menta-600"
+            }`}
+          >
+            <FlaskConical className="h-4 w-4" strokeWidth={2} />
+            <span className="hidden sm:inline">Cenários</span>
           </a>
           <a
             href="/configuracoes"
