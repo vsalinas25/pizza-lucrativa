@@ -8,6 +8,8 @@ import type { Pizza, CanalVenda, Pizzaria, PrecoPorCanal } from "@/types";
 type PizzaComPrecos = Pizza & { precos_por_canal: PrecoPorCanal[] };
 type TipoMeta = "faturamento" | "lucro" | "despesas";
 
+type ModoSimulacao = "unica" | "mix";
+
 export default function SimuladorMeta({
   pizzaria,
   pizzas,
@@ -17,6 +19,7 @@ export default function SimuladorMeta({
   pizzas: PizzaComPrecos[];
   canais: CanalVenda[];
 }) {
+  const [modo, setModo] = useState<ModoSimulacao>("unica");
   const [pizzaId, setPizzaId] = useState(pizzas[0]?.id ?? "");
   const [canalId, setCanalId] = useState(canais[0]?.id ?? "");
   const [tipoMeta, setTipoMeta] = useState<TipoMeta>("despesas");
@@ -67,6 +70,57 @@ export default function SimuladorMeta({
     };
   }, [pizza, canal, preco, temPreco, tipoMeta, valorAlvo]);
 
+  // Modo mix: distribui a meta entre todas as pizzas com preço definido no
+  // canal escolhido, assumindo participação igual entre elas — a mesma
+  // premissa já usada no resumo executivo (volume_mensal_pizzas / nº de
+  // pizzas) pra não introduzir um segundo modelo de mix divergente.
+  const pizzasNoCanal = useMemo(() => {
+    if (!canal) return [];
+    return pizzas
+      .map((p) => {
+        const pc = p.precos_por_canal.find((x) => x.canal_id === canalId);
+        if (!pc || pc.preco_atual <= 0) return null;
+        const margem = calcularMargemContribuicao(pc.preco_atual, p.custo_ficha_tecnica, canal);
+        return { pizza: p, preco: pc.preco_atual, margem };
+      })
+      .filter((x): x is { pizza: PizzaComPrecos; preco: number; margem: number } => x !== null);
+  }, [pizzas, canal, canalId]);
+
+  const resultadoMix = useMemo(() => {
+    if (modo !== "mix" || !canal || pizzasNoCanal.length === 0) return null;
+    const alvo = Number(valorAlvo) || 0;
+    if (alvo <= 0) return null;
+
+    const baseMedia =
+      pizzasNoCanal.reduce(
+        (acc, x) => acc + (tipoMeta === "faturamento" ? x.preco : x.margem),
+        0
+      ) / pizzasNoCanal.length;
+
+    if (baseMedia <= 0) {
+      return { impossivel: true as const };
+    }
+
+    const unidadesTotais = Math.ceil(alvo / baseMedia);
+    const unidadesPorPizza = Math.ceil(unidadesTotais / pizzasNoCanal.length);
+    const detalhamento = pizzasNoCanal.map((x) => ({
+      nome: x.pizza.nome,
+      unidades: unidadesPorPizza,
+      faturamento: unidadesPorPizza * x.preco,
+      lucro: unidadesPorPizza * x.margem,
+    }));
+    const unidadesReais = detalhamento.reduce((acc, d) => acc + d.unidades, 0);
+
+    return {
+      impossivel: false as const,
+      unidadesTotais: unidadesReais,
+      porDia: unidadesReais / 30,
+      faturamentoResultante: detalhamento.reduce((acc, d) => acc + d.faturamento, 0),
+      lucroResultante: detalhamento.reduce((acc, d) => acc + d.lucro, 0),
+      detalhamento,
+    };
+  }, [modo, canal, pizzasNoCanal, tipoMeta, valorAlvo]);
+
   const OPCOES_META: { valor: TipoMeta; label: string }[] = [
     { valor: "despesas", label: "Cobrir despesas fixas" },
     { valor: "faturamento", label: "Atingir faturamento" },
@@ -80,21 +134,42 @@ export default function SimuladorMeta({
         <h2 className="font-display text-lg font-semibold">Quanto preciso vender?</h2>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label className="text-xs text-tinta-400 block mb-1.5">Pizza</label>
-          <select
-            value={pizzaId}
-            onChange={(e) => setPizzaId(e.target.value)}
-            className="w-full rounded-md bg-white border border-creme-200 px-3 py-2 text-sm"
-          >
-            {pizzas.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.nome}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => setModo("unica")}
+          className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+            modo === "unica" ? "bg-tinta-950 text-white" : "bg-creme-50 text-tinta-700 hover:bg-creme-100"
+          }`}
+        >
+          Uma pizza
+        </button>
+        <button
+          onClick={() => setModo("mix")}
+          className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+            modo === "mix" ? "bg-tinta-950 text-white" : "bg-creme-50 text-tinta-700 hover:bg-creme-100"
+          }`}
+        >
+          Mix de sabores
+        </button>
+      </div>
+
+      <div className={`grid gap-3 ${modo === "unica" ? "sm:grid-cols-2" : ""}`}>
+        {modo === "unica" && (
+          <div>
+            <label className="text-xs text-tinta-400 block mb-1.5">Pizza</label>
+            <select
+              value={pizzaId}
+              onChange={(e) => setPizzaId(e.target.value)}
+              className="w-full rounded-md bg-white border border-creme-200 px-3 py-2 text-sm"
+            >
+              {pizzas.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <div>
           <label className="text-xs text-tinta-400 block mb-1.5">Canal</label>
           <select
@@ -141,30 +216,80 @@ export default function SimuladorMeta({
         />
       </div>
 
-      {!pizza || !canais.length ? (
-        <p className="text-sm text-tinta-400">Cadastre uma pizza pra simular.</p>
-      ) : !temPreco ? (
+      {modo === "unica" ? (
+        !pizza || !canais.length ? (
+          <p className="text-sm text-tinta-400">Cadastre uma pizza pra simular.</p>
+        ) : !temPreco ? (
+          <p className="text-sm text-tinta-400">
+            Defina o preço de <strong className="text-tinta-700">{pizza.nome}</strong> em{" "}
+            <strong className="text-tinta-700">{canal?.nome}</strong> pra simular.
+          </p>
+        ) : resultado?.impossivel ? (
+          <div className="rounded-md border border-sinal-vermelho/40 bg-sinal-vermelho/10 p-3">
+            <p className="text-sinal-vermelho text-xs font-semibold">
+              Essa pizza dá prejuízo de {formatarMoeda(resultado.margem)} por unidade em {canal?.nome} — vender
+              mais dela só afasta a meta. Ajuste o preço ou o custo primeiro.
+            </p>
+          </div>
+        ) : resultado ? (
+          <div className="rounded-md bg-creme-50 p-4 space-y-1">
+            <p className="font-mono text-3xl font-semibold text-menta-600 tabular-nums">
+              {resultado.unidades} {resultado.unidades === 1 ? "unidade" : "unidades"}
+            </p>
+            <p className="text-xs text-tinta-400">
+              ≈ {resultado.porDia.toFixed(1)} por dia, todo dia do mês, só dessa pizza nesse canal
+            </p>
+            <p className="text-xs text-tinta-400 pt-2">
+              Faturamento resultante: <span className="font-mono text-tinta-700">{formatarMoeda(resultado.faturamentoResultante)}</span>
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm text-tinta-400">Informe um valor alvo maior que zero.</p>
+        )
+      ) : !canais.length || pizzasNoCanal.length === 0 ? (
         <p className="text-sm text-tinta-400">
-          Defina o preço de <strong className="text-tinta-700">{pizza.nome}</strong> em{" "}
-          <strong className="text-tinta-700">{canal?.nome}</strong> pra simular.
+          Defina preço de pelo menos uma pizza em <strong className="text-tinta-700">{canal?.nome}</strong> pra
+          simular o mix.
         </p>
-      ) : resultado?.impossivel ? (
+      ) : resultadoMix?.impossivel ? (
         <div className="rounded-md border border-sinal-vermelho/40 bg-sinal-vermelho/10 p-3">
           <p className="text-sinal-vermelho text-xs font-semibold">
-            Essa pizza dá prejuízo de {formatarMoeda(resultado.margem)} por unidade em {canal?.nome} — vender
-            mais dela só afasta a meta. Ajuste o preço ou o custo primeiro.
+            Em média, as pizzas com preço em {canal?.nome} dão prejuízo — vender mais só afasta a meta. Ajuste
+            preços ou custos primeiro.
           </p>
         </div>
-      ) : resultado ? (
-        <div className="rounded-md bg-creme-50 p-4 space-y-1">
-          <p className="font-mono text-3xl font-semibold text-menta-600 tabular-nums">
-            {resultado.unidades} {resultado.unidades === 1 ? "unidade" : "unidades"}
-          </p>
-          <p className="text-xs text-tinta-400">
-            ≈ {resultado.porDia.toFixed(1)} por dia, todo dia do mês, só dessa pizza nesse canal
-          </p>
-          <p className="text-xs text-tinta-400 pt-2">
-            Faturamento resultante: <span className="font-mono text-tinta-700">{formatarMoeda(resultado.faturamentoResultante)}</span>
+      ) : resultadoMix ? (
+        <div className="rounded-md bg-creme-50 p-4 space-y-3">
+          <div className="space-y-1">
+            <p className="font-mono text-3xl font-semibold text-menta-600 tabular-nums">
+              {resultadoMix.unidadesTotais}{" "}
+              {resultadoMix.unidadesTotais === 1 ? "unidade" : "unidades"}
+            </p>
+            <p className="text-xs text-tinta-400">
+              ≈ {resultadoMix.porDia.toFixed(1)} por dia, dividido em {pizzasNoCanal.length}{" "}
+              {pizzasNoCanal.length === 1 ? "sabor" : "sabores"} com preço em {canal?.nome}
+            </p>
+            <p className="text-xs text-tinta-400 pt-1">
+              Faturamento resultante: <span className="font-mono text-tinta-700">{formatarMoeda(resultadoMix.faturamentoResultante)}</span>
+              {" · "}
+              Lucro resultante: <span className="font-mono text-tinta-700">{formatarMoeda(resultadoMix.lucroResultante)}</span>
+            </p>
+          </div>
+
+          <div className="h-px bg-creme-200" />
+
+          <div className="space-y-1.5">
+            <p className="text-[11px] text-tinta-400 uppercase tracking-wide">Quanto vender de cada sabor</p>
+            {resultadoMix.detalhamento.map((d) => (
+              <div key={d.nome} className="flex items-center justify-between text-sm">
+                <span className="text-tinta-700">{d.nome}</span>
+                <span className="font-mono text-tinta-950 tabular-nums">{d.unidades}x</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[11px] text-tinta-400 pt-1">
+            Assume participação igual entre os sabores com preço definido nesse canal. Ajuste manualmente se algum
+            sabor vende muito mais ou muito menos que os outros.
           </p>
         </div>
       ) : (
