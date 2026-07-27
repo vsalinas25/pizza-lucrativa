@@ -56,7 +56,7 @@ export default function SimuladorMeta({
     const alvo = Number(valorAlvo) || 0;
     if (alvo <= 0) return null;
 
-    const margem = calcularMargemContribuicao(preco.preco_atual, pizza.custo_ficha_tecnica, canal);
+    const margem = calcularMargemContribuicao(preco.preco_atual, pizza.custo_ficha_tecnica, canal, pizzaria.aliquota_imposto);
     const baseUnitaria = tipoMeta === "faturamento" ? preco.preco_atual : margem;
 
     if (baseUnitaria <= 0) {
@@ -94,7 +94,7 @@ export default function SimuladorMeta({
         .map((p) => {
           const pc = p.precos_por_canal.find((x) => x.canal_id === c.id);
           if (!pc || pc.preco_atual <= 0) return null;
-          const margem = calcularMargemContribuicao(pc.preco_atual, p.custo_ficha_tecnica, c);
+          const margem = calcularMargemContribuicao(pc.preco_atual, p.custo_ficha_tecnica, c, pizzaria.aliquota_imposto);
           return { pizza: p, canal: c, preco: pc.preco_atual, margem };
         })
         .filter((x): x is { pizza: PizzaComPrecos; canal: CanalVenda; preco: number; margem: number } => x !== null);

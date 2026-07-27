@@ -15,9 +15,11 @@ type PizzaComPrecos = Pizza & { precos_por_canal: PrecoPorCanal[] };
 export default function PainelSimulacao({
   pizzas,
   canais,
+  aliquotaImposto,
 }: {
   pizzas: PizzaComPrecos[];
   canais: CanalVenda[];
+  aliquotaImposto: number;
 }) {
   const [cmvAlvoPct, setCmvAlvoPct] = useState(30);
   const [pizzaSelecionadaId, setPizzaSelecionadaId] = useState(pizzas[0]?.id ?? "");
@@ -60,15 +62,15 @@ export default function PainelSimulacao({
   // selecionado.
   const margemContribuicaoAtual =
     pizza && preco && canal
-      ? calcularMargemContribuicao(preco.preco_atual, pizza.custo_ficha_tecnica, canal)
+      ? calcularMargemContribuicao(preco.preco_atual, pizza.custo_ficha_tecnica, canal, aliquotaImposto)
       : null;
   const margemContribuicaoAtualPct =
     pizza && preco && canal
-      ? calcularMargemContribuicaoPercentual(preco.preco_atual, pizza.custo_ficha_tecnica, canal)
+      ? calcularMargemContribuicaoPercentual(preco.preco_atual, pizza.custo_ficha_tecnica, canal, aliquotaImposto)
       : null;
   const margemContribuicaoSugerida =
     pizza && resultado && canal
-      ? calcularMargemContribuicao(resultado.precoSugeridoParaCMVAlvo, pizza.custo_ficha_tecnica, canal)
+      ? calcularMargemContribuicao(resultado.precoSugeridoParaCMVAlvo, pizza.custo_ficha_tecnica, canal, aliquotaImposto)
       : null;
 
   return (

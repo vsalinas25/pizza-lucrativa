@@ -25,10 +25,12 @@ export default function TabelaPizzas({
   pizzas,
   canais,
   pizzariaId,
+  aliquotaImposto,
 }: {
   pizzas: PizzaComPrecos[];
   canais: CanalVenda[];
   pizzariaId: string;
+  aliquotaImposto: number;
 }) {
   const router = useRouter();
   const [editando, setEditando] = useState<string | null>(null);
@@ -199,7 +201,7 @@ export default function TabelaPizzas({
                     const cmv = calcularCMVPercentual(pizza.custo_ficha_tecnica, preco?.preco_atual ?? 0);
                     const nivel = classificarCMV(cmv);
                     const margem = temPreco
-                      ? calcularMargemContribuicao(preco.preco_atual, pizza.custo_ficha_tecnica, canal)
+                      ? calcularMargemContribuicao(preco.preco_atual, pizza.custo_ficha_tecnica, canal, aliquotaImposto)
                       : null;
                     const key = `${pizza.id}-${canal.id}`;
 

@@ -6,9 +6,11 @@ type PizzaComPrecos = Pizza & { precos_por_canal: PrecoPorCanal[] };
 export default function RankingOfensores({
   pizzas,
   canais,
+  aliquotaImposto,
 }: {
   pizzas: PizzaComPrecos[];
   canais: CanalVenda[];
+  aliquotaImposto: number;
 }) {
   const ofensores = pizzas
     .flatMap((pizza) =>
@@ -20,7 +22,9 @@ export default function RankingOfensores({
             pizzaNome: pizza.nome,
             canalNome: canal?.nome ?? "—",
             cmv: calcularCMVPercentual(pizza.custo_ficha_tecnica, pc.preco_atual),
-            margem: canal ? calcularMargemContribuicao(pc.preco_atual, pizza.custo_ficha_tecnica, canal) : null,
+            margem: canal
+              ? calcularMargemContribuicao(pc.preco_atual, pizza.custo_ficha_tecnica, canal, aliquotaImposto)
+              : null,
           };
         })
     )

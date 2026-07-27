@@ -25,7 +25,6 @@ export default function ResumoExecutivo({
     }))
   );
   const temPrecosDefinidos = itensCMV.length > 0;
-  const cmvMedio = calcularCMVMedioPonderado(itensCMV);
 
   // Estimativa de receita/CMV/custos variáveis a partir do volume mensal
   // real (pizzaria.volume_mensal_pizzas), distribuído igualmente entre as
@@ -35,6 +34,7 @@ export default function ResumoExecutivo({
   // margem líquida sem nenhum sentido (ex: -19000%) assim que comparada às
   // despesas fixas mensais reais.
   const volumePorPizza = pizzas.length > 0 ? pizzaria.volume_mensal_pizzas / pizzas.length : 0;
+  const aliquotaFracao = pizzaria.aliquota_imposto / 100;
 
   let receitaTotal = 0;
   let cmvTotal = 0;
@@ -48,13 +48,20 @@ export default function ResumoExecutivo({
       const unidades = volumePorPizza * (canal.percentual_participacao_mix / 100);
       const taxaFracao =
         (canal.comissao_percentual + canal.taxa_transacao_percentual + canal.taxa_marketing_percentual) /
-        100;
+          100 +
+        aliquotaFracao;
 
       receitaTotal += pc.preco_atual * unidades;
       cmvTotal += pizza.custo_ficha_tecnica * unidades;
       custosVariaveisTotais += pc.preco_atual * taxaFracao * unidades;
     }
   }
+
+  // CMV médio ponderado pelo faturamento real de cada combinação (não uma
+  // média simples entre pizza×canal) — precisa bater com o CMV usado no
+  // cálculo da margem líquida logo abaixo, senão os dois números da mesma
+  // tela contam duas histórias diferentes sobre o mesmo negócio.
+  const cmvMedio = receitaTotal > 0 ? cmvTotal / receitaTotal : calcularCMVMedioPonderado(itensCMV);
 
   // Mensalidades fixas dos canais (ex: R$110/mês do iFood) entram como
   // despesa fixa do negócio — não são % sobre o preço, então não cabem em

@@ -61,25 +61,31 @@ export function calcularPrecoParaCMVAlvo(
 
 /**
  * Margem de contribuição (por pizza, por canal) =
- *   preco - custo_ficha_tecnica - (preco * taxas_do_canal)
+ *   preco - custo_ficha_tecnica - (preco * taxas_do_canal) - (preco * aliquota_imposto)
+ * O imposto sobre a venda (regime tributário do negócio, ex: Simples) incide
+ * sobre toda venda independente do canal — por isso entra aqui como fração
+ * adicional, separada das taxas de plataforma. Sem isso, a margem mostrada
+ * fica inflada em relação ao lucro real que sobra depois do imposto.
  * Retorna valor absoluto em R$. Para percentual, divida pelo preço.
  */
 export function calcularMargemContribuicao(
   preco: number,
   custoFichaTecnica: number,
-  canal: CanalTaxas
+  canal: CanalTaxas,
+  aliquotaImpostoPercentual = 0
 ): number {
-  const taxas = taxaTotalCanal(canal);
+  const taxas = taxaTotalCanal(canal) + aliquotaImpostoPercentual / 100;
   return preco - custoFichaTecnica - preco * taxas;
 }
 
 export function calcularMargemContribuicaoPercentual(
   preco: number,
   custoFichaTecnica: number,
-  canal: CanalTaxas
+  canal: CanalTaxas,
+  aliquotaImpostoPercentual = 0
 ): number {
   if (preco <= 0) return 0;
-  return calcularMargemContribuicao(preco, custoFichaTecnica, canal) / preco;
+  return calcularMargemContribuicao(preco, custoFichaTecnica, canal, aliquotaImpostoPercentual) / preco;
 }
 
 export interface DadosMargemLiquida {

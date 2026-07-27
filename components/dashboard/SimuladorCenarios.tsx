@@ -10,9 +10,9 @@ type Driver = "cmv" | "margem";
 
 /**
  * Modelo agregado do negócio (não por pizza): dado um faturamento, uma
- * taxa média de canal e despesas fixas, CMV% e margem líquida% são as duas
- * faces da mesma equação —
- *   margemLiquida = 1 - CMV - taxaMedia - despesasFixas/faturamento
+ * taxa média de canal, um imposto sobre a venda e despesas fixas, CMV% e
+ * margem líquida% são as duas faces da mesma equação —
+ *   margemLiquida = 1 - CMV - taxaMedia - imposto - despesasFixas/faturamento
  * — por isso só faz sentido travar UMA das duas como "entrada" por vez; a
  * outra é sempre derivada. É exatamente essa a mecânica que o dono pediu:
  * mexer no CMV recalcula a margem, mexer na margem recalcula o CMV
@@ -21,23 +21,25 @@ type Driver = "cmv" | "margem";
 function calcularMargemLiquida(params: {
   cmvFracao: number;
   taxaMediaFracao: number;
+  impostoFracao: number;
   despesasFixas: number;
   faturamento: number;
 }): number {
-  const { cmvFracao, taxaMediaFracao, despesasFixas, faturamento } = params;
+  const { cmvFracao, taxaMediaFracao, impostoFracao, despesasFixas, faturamento } = params;
   if (faturamento <= 0) return 0;
-  return 1 - cmvFracao - taxaMediaFracao - despesasFixas / faturamento;
+  return 1 - cmvFracao - taxaMediaFracao - impostoFracao - despesasFixas / faturamento;
 }
 
 function calcularCMVNecessario(params: {
   margemFracao: number;
   taxaMediaFracao: number;
+  impostoFracao: number;
   despesasFixas: number;
   faturamento: number;
 }): number {
-  const { margemFracao, taxaMediaFracao, despesasFixas, faturamento } = params;
+  const { margemFracao, taxaMediaFracao, impostoFracao, despesasFixas, faturamento } = params;
   if (faturamento <= 0) return 0;
-  return 1 - margemFracao - taxaMediaFracao - despesasFixas / faturamento;
+  return 1 - margemFracao - taxaMediaFracao - impostoFracao - despesasFixas / faturamento;
 }
 
 export default function SimuladorCenarios({
@@ -82,6 +84,7 @@ export default function SimuladorCenarios({
     return {
       faturamento: temDados ? Math.round(receitaTotal) : 10000,
       taxaMediaPct: temDados ? Number(((custosVariaveisTotais / receitaTotal) * 100).toFixed(1)) : 10,
+      impostoPct: pizzaria.aliquota_imposto,
       despesasFixas: despesasFixasTotais,
       volumeMensal: pizzaria.volume_mensal_pizzas || 300,
       cmvPct: temDados ? Number(((cmvTotal / receitaTotal) * 100).toFixed(1)) : 30,
@@ -91,6 +94,7 @@ export default function SimuladorCenarios({
   const [driver, setDriver] = useState<Driver>("cmv");
   const [faturamento, setFaturamento] = useState(baseline.faturamento);
   const [taxaMediaPct, setTaxaMediaPct] = useState(baseline.taxaMediaPct);
+  const [impostoPct, setImpostoPct] = useState(baseline.impostoPct);
   const [despesasFixas, setDespesasFixas] = useState(baseline.despesasFixas);
   const [volumeMensal, setVolumeMensal] = useState(baseline.volumeMensal);
   const [cmvPct, setCmvPct] = useState(baseline.cmvPct);
@@ -100,6 +104,7 @@ export default function SimuladorCenarios({
         calcularMargemLiquida({
           cmvFracao: baseline.cmvPct / 100,
           taxaMediaFracao: baseline.taxaMediaPct / 100,
+          impostoFracao: baseline.impostoPct / 100,
           despesasFixas: baseline.despesasFixas,
           faturamento: baseline.faturamento,
         }) * 100
@@ -111,6 +116,7 @@ export default function SimuladorCenarios({
     setDriver("cmv");
     setFaturamento(baseline.faturamento);
     setTaxaMediaPct(baseline.taxaMediaPct);
+    setImpostoPct(baseline.impostoPct);
     setDespesasFixas(baseline.despesasFixas);
     setVolumeMensal(baseline.volumeMensal);
     setCmvPct(baseline.cmvPct);
@@ -122,12 +128,14 @@ export default function SimuladorCenarios({
   const margemCalculada = calcularMargemLiquida({
     cmvFracao: cmvPct / 100,
     taxaMediaFracao: taxaMediaPct / 100,
+    impostoFracao: impostoPct / 100,
     despesasFixas,
     faturamento,
   });
   const cmvCalculado = calcularCMVNecessario({
     margemFracao: margemPct / 100,
     taxaMediaFracao: taxaMediaPct / 100,
+    impostoFracao: impostoPct / 100,
     despesasFixas,
     faturamento,
   });
@@ -261,6 +269,20 @@ export default function SimuladorCenarios({
             />
           </div>
           <div>
+            <label className="text-xs text-tinta-400 block mb-1.5">
+              Imposto sobre vendas: <span className="font-mono text-tinta-700">{impostoPct.toFixed(1)}%</span>
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={20}
+              step={0.5}
+              value={impostoPct}
+              onChange={(e) => setImpostoPct(Number(e.target.value))}
+              className="w-full accent-indigo-500"
+            />
+          </div>
+          <div>
             <label className="text-xs text-tinta-400 block mb-1.5">Despesas fixas mensais (R$)</label>
             <input
               type="number"
@@ -287,7 +309,7 @@ export default function SimuladorCenarios({
 
       <div className="rounded-lg border border-creme-200 bg-white shadow-soft p-5">
         <h2 className="font-display text-lg font-semibold mb-4">Resultado do cenário</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           <div className="rounded-md bg-creme-50 p-3">
             <p
               className={`font-mono text-xl font-semibold tabular-nums ${
@@ -309,6 +331,12 @@ export default function SimuladorCenarios({
               {formatarMoeda(custosVariaveisMensal)}
             </p>
             <p className="text-[11px] text-tinta-400 mt-0.5">Taxas de canal / mês</p>
+          </div>
+          <div className="rounded-md bg-creme-50 p-3">
+            <p className="font-mono text-xl font-semibold text-tinta-950 tabular-nums">
+              {formatarMoeda((impostoPct / 100) * faturamento)}
+            </p>
+            <p className="text-[11px] text-tinta-400 mt-0.5">Imposto / mês</p>
           </div>
           <div className="rounded-md bg-creme-50 p-3">
             <p className="font-mono text-xl font-semibold text-tinta-950 tabular-nums">

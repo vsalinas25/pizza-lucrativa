@@ -9,9 +9,11 @@ type PizzaComPrecos = Pizza & { precos_por_canal: PrecoPorCanal[] };
 export default function ComparativoCanais({
   pizzas,
   canais,
+  aliquotaImposto,
 }: {
   pizzas: PizzaComPrecos[];
   canais: CanalVenda[];
+  aliquotaImposto: number;
 }) {
   const [pizzaId, setPizzaId] = useState(pizzas[0]?.id ?? "");
 
@@ -51,7 +53,7 @@ export default function ComparativoCanais({
             const temPreco = !!preco && preco.preco_atual > 0;
             const cmv = calcularCMVPercentual(pizza.custo_ficha_tecnica, preco?.preco_atual ?? 0);
             const margemContribuicao = temPreco
-              ? calcularMargemContribuicao(preco.preco_atual, pizza.custo_ficha_tecnica, canal)
+              ? calcularMargemContribuicao(preco.preco_atual, pizza.custo_ficha_tecnica, canal, aliquotaImposto)
               : null;
             return (
               <div key={canal.id} className="rounded-md bg-creme-50 p-3">

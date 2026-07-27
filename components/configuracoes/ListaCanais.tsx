@@ -53,8 +53,26 @@ export default function ListaCanais({
     (c) => c === "personalizado" || !canaisIniciais.some((existente) => existente.nome === c)
   );
 
+  const somaMix = canaisIniciais.reduce((acc, c) => acc + c.percentual_participacao_mix, 0);
+  const mixFechado = Math.abs(somaMix - 100) < 0.01;
+
   return (
     <div className="space-y-4">
+      {canaisIniciais.length > 0 && (
+        <div
+          className={`rounded-md border p-3 text-xs ${
+            mixFechado
+              ? "border-sinal-verde/40 bg-sinal-verde/10 text-sinal-verde"
+              : "border-sinal-amarelo/40 bg-sinal-amarelo/10 text-sinal-amarelo"
+          }`}
+        >
+          <span className="font-mono font-semibold">{somaMix.toFixed(1)}%</span> de participação no mix somada
+          entre os canais.{" "}
+          {mixFechado
+            ? "Fechou em 100% — a margem líquida do dashboard usa essa distribuição."
+            : "Ajuste os canais abaixo pra somar 100% — enquanto não fechar, a margem líquida do dashboard fica levemente subestimada."}
+        </div>
+      )}
       {canaisIniciais.map((canal) => (
         <div key={canal.id} className="rounded-lg border border-creme-200 bg-white shadow-soft hover:shadow-card transition-shadow duration-200 p-5">
           <div className="flex items-center justify-between mb-4">

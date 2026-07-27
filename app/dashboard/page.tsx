@@ -62,13 +62,18 @@ export default async function DashboardPage() {
       <ResumoExecutivo pizzaria={pizzaria} pizzas={pizzas ?? []} canais={canais ?? []} />
 
       <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-        <TabelaPizzas pizzas={pizzas ?? []} canais={canais ?? []} pizzariaId={pizzaria.id} />
-        <PainelSimulacao pizzas={pizzas ?? []} canais={canais ?? []} />
+        <TabelaPizzas
+          pizzas={pizzas ?? []}
+          canais={canais ?? []}
+          pizzariaId={pizzaria.id}
+          aliquotaImposto={pizzaria.aliquota_imposto}
+        />
+        <PainelSimulacao pizzas={pizzas ?? []} canais={canais ?? []} aliquotaImposto={pizzaria.aliquota_imposto} />
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2">
-        <RankingOfensores pizzas={pizzas ?? []} canais={canais ?? []} />
-        <ComparativoCanais pizzas={pizzas ?? []} canais={canais ?? []} />
+        <RankingOfensores pizzas={pizzas ?? []} canais={canais ?? []} aliquotaImposto={pizzaria.aliquota_imposto} />
+        <ComparativoCanais pizzas={pizzas ?? []} canais={canais ?? []} aliquotaImposto={pizzaria.aliquota_imposto} />
       </div>
 
       <SimuladorMeta pizzaria={pizzaria} pizzas={pizzas ?? []} canais={canais ?? []} />
