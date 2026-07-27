@@ -19,9 +19,12 @@ export default function SimuladorMeta({
   pizzas: PizzaComPrecos[];
   canais: CanalVenda[];
 }) {
+  const CANAL_TODOS = "todos";
+
   const [modo, setModo] = useState<ModoSimulacao>("unica");
   const [pizzaId, setPizzaId] = useState(pizzas[0]?.id ?? "");
   const [canalId, setCanalId] = useState(canais[0]?.id ?? "");
+  const [canalMixId, setCanalMixId] = useState(CANAL_TODOS);
   const [tipoMeta, setTipoMeta] = useState<TipoMeta>("despesas");
 
   const mensalidadesCanais = canais.reduce((acc, c) => acc + c.custo_fixo_mensal, 0);
@@ -70,45 +73,74 @@ export default function SimuladorMeta({
     };
   }, [pizza, canal, preco, temPreco, tipoMeta, valorAlvo]);
 
-  // Modo mix: distribui a meta entre todas as pizzas com preço definido no
-  // canal escolhido, assumindo participação igual entre elas — a mesma
-  // premissa já usada no resumo executivo (volume_mensal_pizzas / nº de
-  // pizzas) pra não introduzir um segundo modelo de mix divergente.
-  const pizzasNoCanal = useMemo(() => {
-    if (!canal) return [];
-    return pizzas
-      .map((p) => {
-        const pc = p.precos_por_canal.find((x) => x.canal_id === canalId);
-        if (!pc || pc.preco_atual <= 0) return null;
-        const margem = calcularMargemContribuicao(pc.preco_atual, p.custo_ficha_tecnica, canal);
-        return { pizza: p, preco: pc.preco_atual, margem };
-      })
-      .filter((x): x is { pizza: PizzaComPrecos; preco: number; margem: number } => x !== null);
-  }, [pizzas, canal, canalId]);
+  // Modo mix: distribui a meta entre todas as combinações pizza×canal com
+  // preço definido, ponderando por canal e, dentro do canal, participação
+  // igual entre as pizzas — a mesma premissa já usada no resumo executivo
+  // (volume_mensal_pizzas / nº de pizzas) pra não introduzir um segundo
+  // modelo de mix divergente. O peso de cada canal vem do
+  // percentual_participacao_mix já configurado em /configuracoes; se
+  // nenhum canal tiver mix configurado, cai pra peso igual entre canais.
+  const canaisConsiderados = useMemo(() => {
+    if (canalMixId === CANAL_TODOS) return canais;
+    const um = canais.find((c) => c.id === canalMixId);
+    return um ? [um] : [];
+  }, [canais, canalMixId]);
+
+  const itensMix = useMemo(() => {
+    const somaMixCanais = canaisConsiderados.reduce((acc, c) => acc + c.percentual_participacao_mix, 0);
+
+    return canaisConsiderados.flatMap((c) => {
+      const pizzasDoCanal = pizzas
+        .map((p) => {
+          const pc = p.precos_por_canal.find((x) => x.canal_id === c.id);
+          if (!pc || pc.preco_atual <= 0) return null;
+          const margem = calcularMargemContribuicao(pc.preco_atual, p.custo_ficha_tecnica, c);
+          return { pizza: p, canal: c, preco: pc.preco_atual, margem };
+        })
+        .filter((x): x is { pizza: PizzaComPrecos; canal: CanalVenda; preco: number; margem: number } => x !== null);
+
+      if (pizzasDoCanal.length === 0) return [];
+
+      // Peso do canal: participação configurada, ou peso igual se ninguém
+      // configurou mix (soma zero), dividido igualmente entre as pizzas
+      // com preço definido nesse canal.
+      const pesoCanal = somaMixCanais > 0 ? c.percentual_participacao_mix / somaMixCanais : 1 / canaisConsiderados.length;
+      const pesoItem = pesoCanal / pizzasDoCanal.length;
+
+      return pizzasDoCanal.map((x) => ({ ...x, peso: pesoItem }));
+    });
+  }, [canaisConsiderados, pizzas]);
 
   const resultadoMix = useMemo(() => {
-    if (modo !== "mix" || !canal || pizzasNoCanal.length === 0) return null;
+    if (modo !== "mix" || itensMix.length === 0) return null;
     const alvo = Number(valorAlvo) || 0;
     if (alvo <= 0) return null;
 
+    const pesoTotal = itensMix.reduce((acc, x) => acc + x.peso, 0);
+    if (pesoTotal <= 0) return null;
+
     const baseMedia =
-      pizzasNoCanal.reduce(
-        (acc, x) => acc + (tipoMeta === "faturamento" ? x.preco : x.margem),
-        0
-      ) / pizzasNoCanal.length;
+      itensMix.reduce((acc, x) => acc + x.peso * (tipoMeta === "faturamento" ? x.preco : x.margem), 0) / pesoTotal;
 
     if (baseMedia <= 0) {
       return { impossivel: true as const };
     }
 
-    const unidadesTotais = Math.ceil(alvo / baseMedia);
-    const unidadesPorPizza = Math.ceil(unidadesTotais / pizzasNoCanal.length);
-    const detalhamento = pizzasNoCanal.map((x) => ({
-      nome: x.pizza.nome,
-      unidades: unidadesPorPizza,
-      faturamento: unidadesPorPizza * x.preco,
-      lucro: unidadesPorPizza * x.margem,
-    }));
+    const unidadesTotaisAlvo = alvo / baseMedia;
+    const detalhamento = itensMix
+      .map((x) => {
+        const unidades = Math.round((unidadesTotaisAlvo * x.peso) / pesoTotal);
+        return {
+          nome: x.pizza.nome,
+          canalNome: x.canal.nome,
+          unidades,
+          faturamento: unidades * x.preco,
+          lucro: unidades * x.margem,
+        };
+      })
+      .filter((d) => d.unidades > 0)
+      .sort((a, b) => b.unidades - a.unidades);
+
     const unidadesReais = detalhamento.reduce((acc, d) => acc + d.unidades, 0);
 
     return {
@@ -119,7 +151,7 @@ export default function SimuladorMeta({
       lucroResultante: detalhamento.reduce((acc, d) => acc + d.lucro, 0),
       detalhamento,
     };
-  }, [modo, canal, pizzasNoCanal, tipoMeta, valorAlvo]);
+  }, [modo, itensMix, tipoMeta, valorAlvo]);
 
   const OPCOES_META: { valor: TipoMeta; label: string }[] = [
     { valor: "despesas", label: "Cobrir despesas fixas" },
@@ -172,17 +204,32 @@ export default function SimuladorMeta({
         )}
         <div>
           <label className="text-xs text-tinta-400 block mb-1.5">Canal</label>
-          <select
-            value={canalId}
-            onChange={(e) => setCanalId(e.target.value)}
-            className="w-full rounded-md bg-white border border-creme-200 px-3 py-2 text-sm"
-          >
-            {canais.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nome}
-              </option>
-            ))}
-          </select>
+          {modo === "unica" ? (
+            <select
+              value={canalId}
+              onChange={(e) => setCanalId(e.target.value)}
+              className="w-full rounded-md bg-white border border-creme-200 px-3 py-2 text-sm"
+            >
+              {canais.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <select
+              value={canalMixId}
+              onChange={(e) => setCanalMixId(e.target.value)}
+              className="w-full rounded-md bg-white border border-creme-200 px-3 py-2 text-sm"
+            >
+              <option value={CANAL_TODOS}>Todos os canais (mix atual)</option>
+              {canais.map((c) => (
+                <option key={c.id} value={c.id}>
+                  Só {c.nome}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
@@ -246,16 +293,21 @@ export default function SimuladorMeta({
         ) : (
           <p className="text-sm text-tinta-400">Informe um valor alvo maior que zero.</p>
         )
-      ) : !canais.length || pizzasNoCanal.length === 0 ? (
+      ) : itensMix.length === 0 ? (
         <p className="text-sm text-tinta-400">
-          Defina preço de pelo menos uma pizza em <strong className="text-tinta-700">{canal?.nome}</strong> pra
-          simular o mix.
+          Defina preço de pelo menos uma pizza{" "}
+          {canalMixId === CANAL_TODOS ? "em algum canal" : (
+            <>
+              em <strong className="text-tinta-700">{canais.find((c) => c.id === canalMixId)?.nome}</strong>
+            </>
+          )}{" "}
+          pra simular o mix.
         </p>
       ) : resultadoMix?.impossivel ? (
         <div className="rounded-md border border-sinal-vermelho/40 bg-sinal-vermelho/10 p-3">
           <p className="text-sinal-vermelho text-xs font-semibold">
-            Em média, as pizzas com preço em {canal?.nome} dão prejuízo — vender mais só afasta a meta. Ajuste
-            preços ou custos primeiro.
+            Em média, as combinações consideradas dão prejuízo — vender mais só afasta a meta. Ajuste preços ou
+            custos primeiro.
           </p>
         </div>
       ) : resultadoMix ? (
@@ -266,8 +318,8 @@ export default function SimuladorMeta({
               {resultadoMix.unidadesTotais === 1 ? "unidade" : "unidades"}
             </p>
             <p className="text-xs text-tinta-400">
-              ≈ {resultadoMix.porDia.toFixed(1)} por dia, dividido em {pizzasNoCanal.length}{" "}
-              {pizzasNoCanal.length === 1 ? "sabor" : "sabores"} com preço em {canal?.nome}
+              ≈ {resultadoMix.porDia.toFixed(1)} por dia, dividido em {resultadoMix.detalhamento.length}{" "}
+              {resultadoMix.detalhamento.length === 1 ? "combinação de sabor e canal" : "combinações de sabor e canal"}
             </p>
             <p className="text-xs text-tinta-400 pt-1">
               Faturamento resultante: <span className="font-mono text-tinta-700">{formatarMoeda(resultadoMix.faturamentoResultante)}</span>
@@ -279,17 +331,21 @@ export default function SimuladorMeta({
           <div className="h-px bg-creme-200" />
 
           <div className="space-y-1.5">
-            <p className="text-[11px] text-tinta-400 uppercase tracking-wide">Quanto vender de cada sabor</p>
+            <p className="text-[11px] text-tinta-400 uppercase tracking-wide">Quanto vender de cada combinação</p>
             {resultadoMix.detalhamento.map((d) => (
-              <div key={d.nome} className="flex items-center justify-between text-sm">
-                <span className="text-tinta-700">{d.nome}</span>
+              <div key={`${d.nome}-${d.canalNome}`} className="flex items-center justify-between text-sm">
+                <span className="text-tinta-700">
+                  {d.nome} <span className="text-tinta-400">— {d.canalNome}</span>
+                </span>
                 <span className="font-mono text-tinta-950 tabular-nums">{d.unidades}x</span>
               </div>
             ))}
           </div>
           <p className="text-[11px] text-tinta-400 pt-1">
-            Assume participação igual entre os sabores com preço definido nesse canal. Ajuste manualmente se algum
-            sabor vende muito mais ou muito menos que os outros.
+            {canalMixId === CANAL_TODOS
+              ? "Distribui entre canais pela participação no mix configurada em Configurações, e igualmente entre os sabores com preço em cada canal."
+              : "Assume participação igual entre os sabores com preço definido nesse canal."}{" "}
+            Ajuste manualmente se algum sabor ou canal vende muito mais ou muito menos que os outros.
           </p>
         </div>
       ) : (
