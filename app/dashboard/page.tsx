@@ -7,6 +7,7 @@ import RankingOfensores from "@/components/dashboard/RankingOfensores";
 import ComparativoCanais from "@/components/dashboard/ComparativoCanais";
 import SimuladorMeta from "@/components/dashboard/SimuladorMeta";
 import BarraNavegacao from "@/components/dashboard/BarraNavegacao";
+import BotaoRelatorio from "@/components/dashboard/BotaoRelatorio";
 
 export default async function DashboardPage() {
   const supabase = createClient();
@@ -58,6 +59,10 @@ export default async function DashboardPage() {
         paginaAtiva="dashboard"
         renovacaoAtiva={temRenovacaoAtiva}
       />
+
+      <div className="flex justify-end -mt-4">
+        <BotaoRelatorio pizzaria={pizzaria} pizzas={pizzas ?? []} canais={canais ?? []} />
+      </div>
 
       <ResumoExecutivo pizzaria={pizzaria} pizzas={pizzas ?? []} canais={canais ?? []} />
 
