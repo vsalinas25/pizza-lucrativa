@@ -50,18 +50,31 @@ const INCLUSOS = [
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen overflow-x-hidden">
-      {/* HEADER */}
-      <header className="px-5 sm:px-8 py-5 flex items-center justify-between max-w-6xl mx-auto">
-        <Logo />
-        <a
-          href="/login"
-          className="text-sm text-tinta-400 hover:text-menta-600 transition-colors"
-        >
-          Já sou cliente
-        </a>
+    <main className="min-h-screen">
+      {/* HEADER — fixo no topo pra manter a marca e o CTA sempre à mão
+          enquanto rola a página. Fica FORA do wrapper com overflow-x-hidden
+          logo abaixo — overflow diferente de "visible" em qualquer ancestral
+          quebra "position: sticky" dos filhos. */}
+      <header className="sticky top-0 z-50 border-b border-creme-200 bg-creme-50/90 backdrop-blur-sm">
+        <div className="px-5 sm:px-8 py-3.5 flex items-center justify-between max-w-6xl mx-auto">
+          <Logo tamanho="pequeno" />
+          <div className="flex items-center gap-4 sm:gap-6">
+            <a
+              href="/login"
+              className="hidden sm:inline text-sm text-tinta-400 hover:text-menta-600 transition-colors"
+            >
+              Já sou cliente
+            </a>
+            {/* No mobile o hero já tem um CTA fixo embaixo — duplicar aqui
+                em cima criaria dois botões grudentos competindo na tela. */}
+            <span className="hidden sm:block">
+              <BotaoComprar texto="Quero acesso — R$297" />
+            </span>
+          </div>
+        </div>
       </header>
 
+      <div className="overflow-x-hidden">
       {/* HERO */}
       <section className="relative px-5 pt-10 pb-8 sm:px-8 sm:pt-16 lg:pt-20">
         <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-14 items-start max-w-6xl mx-auto">
@@ -306,6 +319,7 @@ export default function LandingPage() {
           Termos de uso, privacidade e política de reembolso
         </a>
       </footer>
+      </div>
     </main>
   );
 }
