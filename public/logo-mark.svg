@@ -1,0 +1,16 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Massa/borda -->
+  <path
+    d="M16 26 C16 26 30 9 50 9 C70 9 84 26 84 26 L77 35 C77 35 65 21 50 21 C35 21 23 35 23 35 Z"
+    fill="#2F8B5C"
+  />
+  <!-- Corpo da fatia -->
+  <path
+    d="M23 35 C23 35 35 21 50 21 C65 21 77 35 77 35 L54 87 C52.5 90 47.5 90 46 87 Z"
+    fill="#3FA871"
+  />
+  <!-- Pontos de recheio — leem como "pontos de preço/dados", não pepperoni literal -->
+  <circle cx="43" cy="45" r="5" fill="#EAF7EF" fill-opacity="0.9" />
+  <circle cx="60" cy="52" r="5" fill="#EAF7EF" fill-opacity="0.9" />
+  <circle cx="48" cy="65" r="5" fill="#EAF7EF" fill-opacity="0.9" />
+</svg>

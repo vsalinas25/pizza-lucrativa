@@ -19,6 +19,7 @@ import {
 import BotaoComprar from "@/components/landing/BotaoComprar";
 import VSLPlayer from "@/components/landing/VSLPlayer";
 import FAQItem from "@/components/landing/FAQItem";
+import Logo from "@/components/Logo";
 
 const DORES = [
   { icone: TrendingDown, texto: "Você fatura bem no fim do mês, mas sobra pouco — e não sabe explicar por quê." },
@@ -50,6 +51,17 @@ const INCLUSOS = [
 export default function LandingPage() {
   return (
     <main className="min-h-screen overflow-x-hidden">
+      {/* HEADER */}
+      <header className="px-5 sm:px-8 py-5 flex items-center justify-between max-w-6xl mx-auto">
+        <Logo />
+        <a
+          href="/login"
+          className="text-sm text-tinta-400 hover:text-menta-600 transition-colors"
+        >
+          Já sou cliente
+        </a>
+      </header>
+
       {/* HERO */}
       <section className="relative px-5 pt-10 pb-8 sm:px-8 sm:pt-16 lg:pt-20">
         <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-14 items-start max-w-6xl mx-auto">

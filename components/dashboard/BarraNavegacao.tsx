@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { LayoutDashboard, Settings, LogOut, FlaskConical } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import BadgeRenovacao from "@/components/dashboard/BadgeRenovacao";
+import Logo from "@/components/Logo";
 
 export default function BarraNavegacao({
   pizzariaNome,
@@ -28,6 +29,7 @@ export default function BarraNavegacao({
   return (
     <header className="flex flex-wrap items-center justify-between gap-4">
       <div>
+        <Logo tamanho="pequeno" comTexto={false} className="mb-1.5 opacity-70" />
         <h1 className="font-display text-2xl font-semibold text-tinta-950">{pizzariaNome}</h1>
         {cidade && <p className="text-tinta-400 text-sm">{cidade}</p>}
       </div>
