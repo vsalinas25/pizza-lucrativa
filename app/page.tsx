@@ -65,7 +65,7 @@ export default function LandingPage() {
               no seu bolso.
             </h1>
             <p className="mt-5 text-tinta-400 text-base sm:text-lg max-w-xl">
-              Uma ferramenta — não uma planilha de contador — que calcula seu CMV real,
+              Chega de planilha solta. Uma ferramenta feita pra pizzaria calcula seu CMV real,
               quanto sobra em reais por pizza em cada canal (site, iFood, Keeta, 99Food)
               e quantas pizzas você precisa vender pra bater sua meta do mês.
             </p>
@@ -77,14 +77,16 @@ export default function LandingPage() {
             <div className="mt-5 sticky bottom-4 sm:static sm:mt-7 z-20">
               <BotaoComprar texto="Quero calcular minha margem real — R$297" tamanho="grande" />
               <p className="text-center sm:text-left text-xs text-tinta-400 mt-2">
-                Pagamento único · Acesso vitalício · Cartão ou PIX
+                Pagamento único · Acesso vitalício · Cartão ou PIX · Garantia de 7 dias
               </p>
             </div>
           </div>
 
-          {/* Preview "ao vivo" do dashboard — dá gosto na oferta antes do vídeo */}
-          <div className="hidden lg:block animate-fade-up [animation-delay:150ms]">
-            <div className="rounded-xl border border-creme-200 bg-white shadow-card p-5 rotate-1 hover:rotate-0 transition-transform duration-300">
+          {/* Preview "ao vivo" do dashboard — antes só aparecia no desktop,
+              mas a maioria de quem recebe esse link no WhatsApp abre no
+              celular, então essa prova visual não podia ficar escondida lá. */}
+          <div className="animate-fade-up [animation-delay:150ms]">
+            <div className="rounded-xl border border-creme-200 bg-white shadow-card p-5 lg:rotate-1 lg:hover:rotate-0 transition-transform duration-300">
               <div className="flex items-center justify-between mb-4">
                 <p className="font-display font-semibold text-sm text-tinta-950">Vitto & Giulio Pizza</p>
                 <span className="text-[10px] font-mono px-2 py-1 rounded-full bg-menta-50 text-menta-600">
@@ -171,8 +173,10 @@ export default function LandingPage() {
           </div>
           <p className="text-tinta-700 max-w-xl">
             Foi assim que essa ferramenta nasceu — resolvendo esse problema pra dentro,
-            antes de virar produto. Ainda estamos no início: os primeiros usuários
-            externos entram agora, com preço de fundador.
+            antes de virar produto.
+          </p>
+          <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-menta-500 text-white text-sm font-semibold px-4 py-2">
+            Ainda no início: os primeiros usuários externos entram agora, com preço de fundador
           </p>
         </div>
       </section>
@@ -235,6 +239,9 @@ export default function LandingPage() {
               </strong>
             </p>
             <BotaoComprar texto="Quero acesso vitalício — R$297" tamanho="grande" />
+            <p className="text-center text-xs text-tinta-400 mt-3">
+              7 dias de garantia incondicional — não gostou, devolvemos 100%.
+            </p>
           </div>
         </div>
       </section>
@@ -252,6 +259,14 @@ export default function LandingPage() {
           <FAQItem
             pergunta="Funciona pra pizzaria pequena, sem loja física?"
             resposta="Sim. O cálculo é por pizza e por canal — funciona igual pra quem só vende por delivery quanto pra quem tem salão."
+          />
+          <FAQItem
+            pergunta="Funciona no celular?"
+            resposta="Sim, o dashboard todo funciona direto do navegador do celular — não precisa instalar nada."
+          />
+          <FAQItem
+            pergunta="Quanto tempo leva pra configurar?"
+            resposta="Uns 10-15 minutos pra cadastrar sua pizzaria, canais de venda e as pizzas do cardápio. Depois disso o dashboard já mostra seu CMV e sua margem real."
           />
           <FAQItem
             pergunta="E se eu não gostar?"

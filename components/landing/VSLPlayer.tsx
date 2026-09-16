@@ -14,15 +14,12 @@ const THUMBNAIL_URL = process.env.NEXT_PUBLIC_VSL_THUMBNAIL_URL ?? "";
 export default function VSLPlayer() {
   const [tocando, setTocando] = useState(false);
 
+  // Sem vídeo configurado ainda: não renderiza nada em vez de mostrar uma
+  // caixa vazia (ou pior, instrução de configuração) pra visitante real.
+  // O card de preview do dashboard no hero já carrega a prova visual
+  // enquanto o VSL não está pronto.
   if (!EMBED_URL) {
-    return (
-      <div className="aspect-video w-full rounded-lg bg-white border border-creme-200 flex items-center justify-center">
-        <p className="text-tinta-400 text-sm px-6 text-center">
-          Espaço reservado do VSL — configure NEXT_PUBLIC_VSL_EMBED_URL e
-          NEXT_PUBLIC_VSL_THUMBNAIL_URL no .env
-        </p>
-      </div>
-    );
+    return null;
   }
 
   if (!tocando) {
